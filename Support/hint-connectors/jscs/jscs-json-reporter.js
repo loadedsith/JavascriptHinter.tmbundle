@@ -2,10 +2,10 @@
  * Reporter for jscs that outputs a JSON string with the errors
  * @param {Errors[]} errorsCollection
  */
-module.exports = function(errorsCollection) {
+module.exports = function (errorsCollection) {
 	var errorReport = [];
 
-	errorsCollection.forEach(function(errors) {
+	errorsCollection.forEach(function (errors) {
 		// check per file
 		if (!errors.isEmpty()) {
 			// check per error

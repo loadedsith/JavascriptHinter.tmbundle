@@ -4,7 +4,8 @@ var Q = require('q'),
 	getCmdOpts, getRunners, getJson, render;
 
 /**
- * Get the list of hint runner promises
+ * Get the list of hint runner promises.
+ * @return {Array<>}
  */
 getRunners = function () {
 	var jshintConnector = require('./hint-connectors/jshint/connector'),
@@ -30,8 +31,11 @@ getRunners = function () {
 
 /**
  * Merge data coming back from hint runner promises
+ * @param {Array<Object>} runners Output from runners, to be converted to JSON.
+ * @return {Q.Promise} Returns a promise that is resolved when the output is
+ *   gathered.
  */
-getJson = function (runners) {
+var getJson = function (runners) {
 	var def = Q.defer();
 	Q.spread(runners, function () {
 		var data = [];
@@ -45,8 +49,9 @@ getJson = function (runners) {
 
 /**
  * Render data with the requested renderer
+ * @param {Object} jsonData JSON array of errors to be renedered.
  */
-render = function (jsonData) {
+var render = function (jsonData) {
 	var reporter, gutterReporter;
 	switch (cmdOpts.options.renderer) {
 	case 'tooltip':
@@ -67,8 +72,9 @@ render = function (jsonData) {
 
 /**
  * Get command line params
+ * @return {Object} Command line arguments as configuration object.
  */
-getCmdOpts = function () {
+var getCmdOpts = function () {
 	return getopt.create([
 		['r', 'renderer=ARG', 'renderer to use: default or tooltip'],
 		['h', 'help', 'display this help'],
@@ -77,6 +83,7 @@ getCmdOpts = function () {
 	.bindHelp()
 	.parseSystem();
 };
+
 
 /**
  * Run the process

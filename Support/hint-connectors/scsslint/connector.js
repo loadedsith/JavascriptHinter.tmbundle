@@ -1,5 +1,6 @@
 /**
  * JavascriptHinter - scss-lint connector
+ *
  * Runs the installed scss-lint version with the default JSON reporter and
  * parses the output into a JS object.
  */
@@ -7,11 +8,15 @@ var path = require('path'),
 	getJsonOutput = require('../helpers/getjsonoutput'),
 	Q = require('q');
 
+/**
+ * JavaScriptHinter for TextMate plugin for scss-lint.
+ * @type tmJavaScriptHinter.plugin
+ */
 module.exports = {
 	/**
 	 * Process the file using scss-lint
 	 * @param {Array} files Array of files to check with the specified linter
-	 * @returns {Q.Promise} Returns a promise that is resolved when the output is
+	 * @return {Q.Promise} Returns a promise that is resolved when the output is
 	 * parsed to a JS object.
 	 */
 	process: function (files) {

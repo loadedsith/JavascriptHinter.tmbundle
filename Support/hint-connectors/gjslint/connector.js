@@ -4,8 +4,13 @@
  * the output into a JS object
  */
 var path = require('path'),
-  getJsonGJSLintOutput = require('./getjsongjslintoutput');
+	getJsonGJSLintOutput = require('./getjsongjslintoutput');
 
+
+/**
+ * JavaScriptHinter for TextMate plugin for gjslint.
+ * @type tmJavaScriptHinter.plugin
+ */
 module.exports = {
   /**
    * Process the file using gjslint

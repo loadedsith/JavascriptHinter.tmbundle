@@ -1,12 +1,18 @@
 /**
  * JavascriptHinter - eslint connector
- * Runs the installed eslint version with the default JSON reporter and parses the output
- * into a JS object
+ *
+ * Runs the installed eslint version with the default JSON reporter and parses
+ * the output into a JS object.
  */
 var path = require('path'),
-  getJsonOutput = require('../helpers/getjsonoutput'),
-  Q = require('q');
+	getJsonOutput = require('../helpers/getjsonoutput'),
+	Q = require('q');
 
+
+/**
+ * JavaScriptHinter for TextMate plugin for eslint.
+ * @type tmJavaScriptHinter.plugin
+ */
 module.exports = {
   /**
    * Process the file using eslint

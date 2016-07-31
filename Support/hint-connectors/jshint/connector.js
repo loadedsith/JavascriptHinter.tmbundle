@@ -1,11 +1,17 @@
 /**
  * JavascriptHinter - jshint connector
- * Runs the installed jshint version with the specified JSON reporter and parses the output
- * into a JS object
+ *
+ * Runs the installed jshint version with the specified JSON reporter and parses
+ * the output into a JS object
  */
 var path = require('path'),
 	getJsonOutput = require('../helpers/getjsonoutput');
 
+
+/**
+ * JavaScriptHinter for TextMate plugin for jshint.
+ * @type tmJavaScriptHinter.plugin
+ */
 module.exports = {
 	/**
 	 * Process the file using jshint
