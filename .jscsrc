@@ -1,7 +1,8 @@
 {
-	"preset": [
-		"crockford"
-	],
-	"validateIndentation": "\t",
-	"disallowDanglingUnderscores": null
+    "preset": [
+        "crockford"
+    ],
+    "validateIndentation": "\t",
+    "disallowDanglingUnderscores": null,
+    "disallowMultipleVarDecl": false
 }

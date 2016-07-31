@@ -1,4 +1,0 @@
-JSHINTER_OPTIONS_PATH = '${TM_PROJECT_DIRECTORY}/.tm_jshinter.json'
-
-softTabs         = false
-tabSize          = 2

@@ -124,6 +124,4 @@ More info:
 /*    "maxdepth"     : false, // int max nested block depth per function*/
 		"maxparams"    : 10, // int max params per function
 		"maxcomplexity": 10  // int max cyclomatic complexity per function
-  
-  
 }

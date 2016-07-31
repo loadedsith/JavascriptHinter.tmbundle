@@ -10,20 +10,32 @@ var path = require('path'),
 
 /**
  * JavaScriptHinter for TextMate plugin for scss-lint.
- * @type tmJavaScriptHinter.plugin
+ * @type {tmJavaScriptHinter.plugin}
  */
 module.exports = {
+	name: 'scsslint',
+	extensions: ['scss'],
 	/**
 	 * Process the file using scss-lint
 	 * @param {Array} files Array of files to check with the specified linter
+	 * @param {Object} options Configuration options for the current linter.
 	 * @return {Q.Promise} Returns a promise that is resolved when the output is
 	 * parsed to a JS object.
 	 */
-	process: function (files) {
+	process: function (files, options) {
 		var def = Q.defer(),
 			fileDir = path.dirname(files[0]),
-			args = ['--format', 'JSON'].concat(files),
-			originalOutput = getJsonOutput('scss-lint', args, {cwd: fileDir});
+			args = ['--format', 'JSON'];
+
+		if (options.args) {
+			options.args.forEach(function (arg) {
+				args.push(arg);
+			})
+		}
+
+		args = args.concat(files);
+
+		var originalOutput = getJsonOutput('scss-lint', args, {cwd: fileDir});
 
 		/**
 		 * Original JSON output needs to be transformed so it can be used with the

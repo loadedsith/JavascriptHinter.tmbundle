@@ -9,21 +9,31 @@ var path = require('path'),
 
 /**
  * JavaScriptHinter for TextMate plugin for gjslint.
- * @type tmJavaScriptHinter.plugin
+ * @type {tmJavaScriptHinter.plugin}
  */
 module.exports = {
-  /**
-   * Process the file using gjslint
-   *
-   * @param {Array} files Array of files to check with the specified linter
-   * @returns {Q.Promise} Returns a promise that is resolved when the output is
-   *     parsed to a JS object
-   */
-  process: function(files) {
-    var fileDir = path.dirname(files[0]),
-      args = [
-        '--nobeep', '--nosummary', '--quiet'
-      ].concat(files);
-    return getJsonGJSLintOutput('gjslint', args, {cwd: fileDir});
-  }
+	name: 'gjslint',
+	extensions: ['js'],
+	/**
+	 * Process the file using gjslint
+	 *
+	 * @param {Array} files Array of files to check with the specified linter
+	 * @return {Q.Promise} Returns a promise that is resolved when the output is
+	 *		 parsed to a JS object
+	 */
+	process: function (files, options) {
+		var fileDir = path.dirname(files[0]),
+			args = [
+				'--nobeep', '--nosummary', '--quiet'
+			];
+
+			if (options.args) {
+				options.args.forEach(function (arg) {
+					args.push(arg);
+				});
+			}
+
+			args = args.concat(files);
+		return getJsonGJSLintOutput('gjslint', args, {cwd: fileDir});
+	}
 };

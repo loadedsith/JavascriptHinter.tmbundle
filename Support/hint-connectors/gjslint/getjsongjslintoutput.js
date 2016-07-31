@@ -4,9 +4,7 @@
  * renderer.
  */
 var Q = require('q'),
-	cp = require('child_process'),
-	getJsonGJSLintOutput;
-
+	cp = require('child_process');
 
 
 /**
@@ -18,11 +16,11 @@ var Q = require('q'),
  * @return {Q.Promise} Returns a promise that is resolved when executable
  *	 finishes running
  */
-getJsonGJSLintOutput = function (runnable, args, options) {
-	var def = Q.defer(),
+module.exports = function (runnable, args, options) {
+	var def = Q.defer()
 		error = '',
 		proc = cp.spawn(runnable, args, options || {}),
-		fileRegex = new RegExp(/.*?(\/.*)\ -{5}/);
+		fileRegex = new RegExp(/.*?(\/.*)\ -{5}/),
 		errorRegex = new RegExp(/^Line (\d+), E:([^:]+): (.+)$/gm);
 
 	proc.stdout.on('data', function (errorDataChunk) {
@@ -36,7 +34,6 @@ getJsonGJSLintOutput = function (runnable, args, options) {
 			var lines = error.match(/^.*((\r\n|\n|\r)|$)/gm);
 			for (var line of lines) {
 				var file = fileRegex.exec(lines[0])[1];
-				console.log('file', file);
 
 				var errorObject = {
 					file: file,
@@ -44,11 +41,12 @@ getJsonGJSLintOutput = function (runnable, args, options) {
 					column: null,
 					evidence: ''
 				};
+
 				var lineMatches = errorRegex.exec(line);
 				if (lineMatches) {
 					errorObject.line = parseInt(lineMatches[1]);
 					errorObject.message = lineMatches[3];
-					errorObject.error = 'E' + lineMatches[2];
+					errorObject.error = 'E:' + lineMatches[2];
 					errors.push(errorObject);
 				}
 			}
@@ -62,4 +60,4 @@ getJsonGJSLintOutput = function (runnable, args, options) {
 	return def.promise;
 };
 
-module.exports = getJsonGJSLintOutput;
+
