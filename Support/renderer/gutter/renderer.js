@@ -28,8 +28,8 @@
 
 	/**
 	 * Clear existing gutter marks and render empty warnings for each error line.
-	 * Errors are later overwritten with the proper warning message, but this prevents
-	 * the flickering when clearing existing marks.
+	 * Errors are later overwritten with the proper warning message, but
+	 * this prevents the flickering when clearing existing marks.
 	 */
 	function refreshMarks(errors) {
 		// clear existing marks in the current file
@@ -61,7 +61,13 @@
 	function renderDescriptions(errors) {
 		errors.forEach(function (err) {
 			if (err.file === currentFile) {
-				cp.spawn(MATE, ['--set-mark', gutterImage + ':"' + err.message + '"', '--line', err.line, err.file]);
+				cp.spawn(MATE, [
+					'--set-mark',
+					gutterImage + ':"' + err.message + '"',
+					'--line',
+					err.line,
+					err.file
+				]);
 			}
 		});
 	}

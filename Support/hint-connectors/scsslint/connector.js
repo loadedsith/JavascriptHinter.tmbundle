@@ -14,7 +14,7 @@ var path = require('path'),
  */
 module.exports = {
 	name: 'scsslint',
-	extensions: ['scss'],
+	extensions: ['.scss'],
 	/**
 	 * Process the file using scss-lint
 	 * @param {Array} files Array of files to check with the specified linter
@@ -30,7 +30,7 @@ module.exports = {
 		if (options.args) {
 			options.args.forEach(function (arg) {
 				args.push(arg);
-			})
+			});
 		}
 
 		args = args.concat(files);
@@ -43,7 +43,7 @@ module.exports = {
 		 */
 		originalOutput
 			.then(function (output) {
-				var errors = (output[files[0]]||[]).map(function (error) {
+				var errors = (output[files[0]] || []).map(function (error) {
 					return {
 						hinttype: 'scss',
 						file: files[0],

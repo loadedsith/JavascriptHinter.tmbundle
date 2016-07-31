@@ -15,7 +15,7 @@ var path = require('path'),
  */
 module.exports = {
 	name: 'eslint',
-	extensions: ['js'],
+	extensions: ['.js'],
 	/**
 	 * Process the file using eslint
 	 * @param {Array} files Array of files to check with the specified linter

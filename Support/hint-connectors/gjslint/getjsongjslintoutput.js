@@ -17,7 +17,7 @@ var Q = require('q'),
  *	 finishes running
  */
 module.exports = function (runnable, args, options) {
-	var def = Q.defer()
+	var def = Q.defer(),
 		error = '',
 		proc = cp.spawn(runnable, args, options || {}),
 		fileRegex = new RegExp(/.*?(\/.*)\ -{5}/),

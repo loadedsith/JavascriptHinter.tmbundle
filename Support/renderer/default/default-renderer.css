@@ -63,12 +63,12 @@ header .additional a {
 
 /*** Body ***/
 .problems {
-	margin: 65px 0px 0px 0px;
+	margin: 65px 100px 100px 100px;
 	padding: 0;
 	list-style: none;
 }
 .problems li {
-	margin: 0;
+	margin: 100px;
 }
 .problems li.file {
 	margin: 0;

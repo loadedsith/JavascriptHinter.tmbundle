@@ -74,7 +74,10 @@ var getRunners = function () {
 
 	if (files.length === 0) {
 		files = fileList(cmdOpts.options.directory, options.ignored);
-		console.log('files', files);
+	}
+
+	if (!files) {
+		return;
 	}
 
 	if (!files.forEach) {

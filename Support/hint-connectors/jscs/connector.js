@@ -14,7 +14,7 @@ var path = require('path'),
  */
 module.exports = {
 	name: 'jscs',
-	extensions: ['js'],
+	extensions: ['.js'],
 	/**
 	 * Process the file using jscs
 	 * @param {Array} files Array of files to check with the specified linter

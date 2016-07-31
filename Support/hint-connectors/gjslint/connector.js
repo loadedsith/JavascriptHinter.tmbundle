@@ -13,7 +13,7 @@ var path = require('path'),
  */
 module.exports = {
 	name: 'gjslint',
-	extensions: ['js'],
+	extensions: ['.js'],
 	/**
 	 * Process the file using gjslint
 	 *
