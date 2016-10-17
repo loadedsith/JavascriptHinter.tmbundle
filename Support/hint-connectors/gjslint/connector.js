@@ -4,7 +4,7 @@
  * the output into a JS object
  */
 var path = require('path'),
-	getJsonGJSLintOutput = require('./getjsongjslintoutput');
+  getJsonGJSLintOutput = require('./getjsongjslintoutput');
 
 
 /**
@@ -12,28 +12,28 @@ var path = require('path'),
  * @type {tmJavaScriptHinter.plugin}
  */
 module.exports = {
-	name: 'gjslint',
-	extensions: ['.js'],
-	/**
-	 * Process the file using gjslint
-	 *
-	 * @param {Array} files Array of files to check with the specified linter
-	 * @return {Q.Promise} Returns a promise that is resolved when the output is
-	 *		 parsed to a JS object
-	 */
-	process: function (files, options) {
-		var fileDir = path.dirname(files[0]),
-			args = [
-				'--nobeep', '--nosummary', '--quiet'
-			];
+  name: 'gjslint',
+  extensions: ['.js'],
+  /**
+   * Process the file using gjslint
+   *
+   * @param {Array} files Array of files to check with the specified linter
+   * @return {Q.Promise} Returns a promise that is resolved when the output is
+   *     parsed to a JS object
+   */
+  process: function (files, options) {
+    var fileDir = path.dirname(files[0]),
+      args = [
+        '--nobeep', '--nosummary', '--quiet'
+      ];
 
-			if (options.args) {
-				options.args.forEach(function (arg) {
-					args.push(arg);
-				});
-			}
+      if (options.args) {
+        options.args.forEach(function (arg) {
+          args.push(arg);
+        });
+      }
 
-			args = args.concat(files);
-		return getJsonGJSLintOutput('gjslint', args, {cwd: fileDir});
-	}
+      args = args.concat(files);
+    return getJsonGJSLintOutput('gjslint', args, {cwd: fileDir});
+  }
 };

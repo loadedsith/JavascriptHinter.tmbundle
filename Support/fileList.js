@@ -1,23 +1,23 @@
 var fs = require('fs'),
-		path = require('path');
+    path = require('path');
 
 var fileList = function (dir, ignoredFiles) {
-	if (!ignoredFiles) {
-		ignoredFiles = [];
-	}
-	return fs.readdirSync(dir).reduce(function (list, file) {
-		var name = path.join(dir, file);
-		var isDir = fs.statSync(name).isDirectory();
-		for (var i = ignoredFiles.length - 1; i >= 0; i--) {
-			var ignoredFile = ignoredFiles[i];
-			if (name.indexOf(ignoredFile) !== -1) {
-				return list;
-			}
-		}
+  if (!ignoredFiles) {
+    ignoredFiles = [];
+  }
+  return fs.readdirSync(dir).reduce(function (list, file) {
+    var name = path.join(dir, file);
+    var isDir = fs.statSync(name).isDirectory();
+    for (var i = ignoredFiles.length - 1; i >= 0; i--) {
+      var ignoredFile = ignoredFiles[i];
+      if (name.indexOf(ignoredFile) !== -1) {
+        return list;
+      }
+    }
 
 
-		return list.concat(isDir ? fileList(name, ignoredFiles) : [name]);
-	}, []);
+    return list.concat(isDir ? fileList(name, ignoredFiles) : [name]);
+  }, []);
 };
 
 /**

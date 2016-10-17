@@ -4,30 +4,30 @@
  * renderer.
  */
 var Q = require('q'),
-	cp = require('child_process'),
-	getJsonOutput;
+  cp = require('child_process'),
+  getJsonOutput;
 
 
 var getJsonOutput = function (runnable, args, options) {
-	var def = Q.defer(),
-		dataConcat = '',
-		proc = cp.spawn(runnable, args, options || {});
+  var def = Q.defer(),
+    dataConcat = '',
+    proc = cp.spawn(runnable, args, options || {});
 
-	proc.stdout.on('data', function (data) {
-		dataConcat = dataConcat + data;
-	});
+  proc.stdout.on('data', function (data) {
+    dataConcat = dataConcat + data;
+  });
 
-	proc.on('close', function () {
-		var jsonData;
-		try {
-			jsonData = JSON.parse(dataConcat);
-		} catch (e) {
-			jsonData = [];
-		}
-		def.resolve(jsonData);
-	});
+  proc.on('close', function () {
+    var jsonData;
+    try {
+      jsonData = JSON.parse(dataConcat);
+    } catch (e) {
+      jsonData = [];
+    }
+    def.resolve(jsonData);
+  });
 
-	return def.promise;
+  return def.promise;
 };
 
 
