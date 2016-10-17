@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>beforeRunningCommand</key>
+	<string>nop</string>
+	<key>command</key>
+	<string>#!/usr/bin/env ruby18 -wKU
+
+project_dir = ENV['TM_PROJECT_DIRECTORY']
+
+unless project_dir
+  puts "Not in a project!"
+  exit
+end
+
+path = File.join(project_dir, '.tm_jshinter.js')
+system 'touch', path
+system 'open', "txmt://open?url=file://#{path}"
+</string>
+	<key>input</key>
+	<string>selection</string>
+	<key>inputFormat</key>
+	<string>text</string>
+	<key>name</key>
+	<string>Open JavascriptHinter Config</string>
+	<key>outputCaret</key>
+	<string>afterOutput</string>
+	<key>outputFormat</key>
+	<string>text</string>
+	<key>outputLocation</key>
+	<string>replaceInput</string>
+	<key>uuid</key>
+	<string>A8D632C1-1181-4DCA-998E-D28DC5F48681</string>
+	<key>version</key>
+	<integer>2</integer>
+</dict>
+</plist>
