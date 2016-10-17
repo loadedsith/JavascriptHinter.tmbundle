@@ -1,4 +1,4 @@
 JSHINTER_OPTIONS_PATH = '${TM_DIRECTORY:TM_PROJECT_DIRECTORY}/.tm_jshinter.js'
 
-softTabs = false
+softTabs = true
 tabSize = 2
