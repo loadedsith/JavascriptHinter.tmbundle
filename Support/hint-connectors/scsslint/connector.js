@@ -24,8 +24,12 @@ module.exports = {
    */
   process: function (files, options) {
     var def = Q.defer(),
-      fileDir = path.dirname(files[0]),
+      cwd = path.dirname(files[0]),
       args = ['--format', 'JSON'];
+
+    if (process.env.TM_PROJECT_DIRECTORY) {
+      cwd = process.env.TM_PROJECT_DIRECTORY;
+    }
 
     if (options.args) {
       options.args.forEach(function (arg) {
@@ -35,7 +39,7 @@ module.exports = {
 
     args = args.concat(files);
 
-    var originalOutput = getJsonOutput('scss-lint', args, {cwd: fileDir});
+    var originalOutput = getJsonOutput('scss-lint', args, {cwd:cwd});
 
     /**
      * Original JSON output needs to be transformed so it can be used with the
