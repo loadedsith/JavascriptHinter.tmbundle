@@ -97,7 +97,12 @@ var getRunners = function () {
       }
 
       plugin.extensions.forEach(function (extension) {
-        if (file.indexOf(extension) !== -1) {
+        var fileExt = file.substring(
+          file.length,
+          (file.length - 1) - (extension.length - 1)
+         );
+
+        if (fileExt === extension) {
           connectors.push(plugin.process([file], (options[plugin.name] || {})));
         }
       });
