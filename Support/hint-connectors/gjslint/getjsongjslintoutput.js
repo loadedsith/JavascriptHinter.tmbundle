@@ -17,42 +17,59 @@ var Q = require('q'),
  *   finishes running
  */
 module.exports = function (runnable, args, options) {
-  var def = Q.defer(),
-    error = '',
-    proc = cp.spawn(runnable, args, options || {}),
-    fileRegex = new RegExp(/.*?(\/.*)\ -{5}/),
-    errorRegex = new RegExp(/^Line (\d+), E:([^:]+): (.+)$/gm);
+  var def = Q.defer();
+  var error = '';
+  var proc = cp.spawn(runnable, args, options || {});
 
-  proc.stdout.on('data', function (errorDataChunk) {
-    error = error + errorDataChunk;
+  proc.stdout.on('data', function (data) {
+    error = error + data;
   });
 
   proc.on('close', function () {
     var errors = [];
+    var fileRegex = new RegExp(/.*?(\/.*)\ -{5}/);
+    var errorRegex = new RegExp(/^Line (\d+), E:([^:]+): (.+)$/gm);
+    // var sortRegex = new RegExp(/^goog.require(\(([\s\S]+?)*?)\)/gm);
+
+    var lines = error.match(/^.*((\r\n|\n|\r)|$)/gm);
+    var errorObject = {};
+    var lastError = {message: ''};
+    var match = true;//init true to ignore the file line
+    var file;
 
     try {
-      var lines = error.match(/^.*((\r\n|\n|\r)|$)/gm);
-      for (var line of lines) {
-        var file = fileRegex.exec(lines[0])[1];
+      file = fileRegex.exec(lines[0])[1];
+    } catch (e) {
 
-        var errorObject = {
+    }
+
+    for (var line of lines) {
+      var lineMatches;
+
+      // we want to keep building the error object until
+      // another lineMatch.
+      while (lineMatches = errorRegex.exec(line)) {
+        errorObject = {
           file: file,
           hinttype: 'gjslint',
           column: null,
-          evidence: ''
+          evidence: '',
+          line: parseInt(lineMatches[1]),
+          message: lineMatches[3] + '\n',
+          error: 'E:' + lineMatches[2],
+          ready: false
         };
-
-        var lineMatches = errorRegex.exec(line);
-        if (lineMatches) {
-          errorObject.line = parseInt(lineMatches[1]);
-          errorObject.message = lineMatches[3];
-          errorObject.error = 'E:' + lineMatches[2];
-          errors.push(errorObject);
-        }
+        errors.push(errorObject);
+        lastError = errorObject;
+        match = true;
       }
-    } catch (e) {
-      errors = [];
+
+      if (!match) {
+        lastError.message = '    ' + line;
+      }
+      match = false;
     }
+
 
     def.resolve(errors);
   });
