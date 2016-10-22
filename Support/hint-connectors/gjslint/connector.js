@@ -34,6 +34,8 @@ module.exports = {
       }
 
       args = args.concat(files);
-    return getJsonGJSLintOutput('gjslint', args, {cwd: fileDir});
+    return getJsonGJSLintOutput('gjslint', args, {
+      cwd: fileDir,
+    });
   }
 };

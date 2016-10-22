@@ -38,8 +38,9 @@ module.exports = {
     }
 
     args = args.concat(files);
-
-    var originalOutput = getJsonOutput('scss-lint', args, {cwd:cwd});
+    var originalOutput = getJsonOutput('scss-lint', args, {
+      cwd: cwd
+    });
 
     /**
      * Original JSON output needs to be transformed so it can be used with the
