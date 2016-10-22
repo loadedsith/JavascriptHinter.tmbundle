@@ -10,7 +10,9 @@ module.exports = {
     '.DS_store',
     'build',
     '.jshintrc',
-    '.jshintignore'
+    '.jshintignore',
+    '.*.min.js',
+    '.*.min.css'
   ],
   eslint: {
     args: [

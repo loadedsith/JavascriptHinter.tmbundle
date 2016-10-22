@@ -22,7 +22,7 @@ module.exports = {
     fileList(pluginPath).forEach(function (filePath) {
       var pluginNameLength = filePath.length - connectorName.length;
       if (filePath.indexOf(connectorName) === pluginNameLength) {
-        var plugin = require('./' + filePath);
+        var plugin = require(filePath);
         plugins.push(plugin);
       }
     });
