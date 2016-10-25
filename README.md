@@ -8,7 +8,7 @@ This is a TextMate 2 JSHint and JSCS plugin using the installed version of JSHin
 
 ### Installation ###
 
-**Requirements:** 
+**Requirements:**
 
 - [Node.js][nodejs]
 - [TextMate 2][textmate]
@@ -34,7 +34,7 @@ This is a TextMate 2 JSHint and JSCS plugin using the installed version of JSHin
 The bundle will use the default installed jshint and jscs executables, and the existing configuration in the project or in home directory.
 The bundle is bound to the `^l` key by default in javascript mode, so make sure you disable previous bundles that were using this combo (like Jshint.tmbundle for example)
 
- 
+
 ### Presentation ###
 
 By default, Textmate2 shows any bundle output in a popup window, but also supports a sidebar as shown in the screenshot above.
