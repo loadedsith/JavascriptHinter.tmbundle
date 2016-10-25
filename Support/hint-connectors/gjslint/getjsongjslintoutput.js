@@ -20,7 +20,6 @@ module.exports = function (runnable, args, options) {
   var def = Q.defer();
   var error = '';
   var proc = cp.spawn(runnable, args, options || {});
-
   proc.stdout.on('data', function (data) {
     error = error + data;
   });
@@ -29,7 +28,6 @@ module.exports = function (runnable, args, options) {
     var errors = [];
     var fileRegex = new RegExp(/.*?(\/.*)\ -{5}/);
     var errorRegex = new RegExp(/^Line (\d+), E:([^:]+): (.+)$/gm);
-    // var sortRegex = new RegExp(/^goog.require(\(([\s\S]+?)*?)\)/gm);
 
     var lines = error.match(/^.*((\r\n|\n|\r)|$)/gm);
     var errorObject = {};
@@ -38,16 +36,16 @@ module.exports = function (runnable, args, options) {
     var file;
 
     try {
-      file = fileRegex.exec(lines[0])[1];
+      if (!file) {
+        file = fileRegex.exec(lines[0])[1];
+      }
     } catch (e) {
 
     }
 
     for (var line of lines) {
       var lineMatches;
-
-      // we want to keep building the error object until
-      // another lineMatch.
+      // we want to keep building the error object until another lineMatch.
       while (lineMatches = errorRegex.exec(line)) {
         errorObject = {
           file: file,
@@ -55,7 +53,7 @@ module.exports = function (runnable, args, options) {
           column: null,
           evidence: '',
           line: parseInt(lineMatches[1]),
-          message: lineMatches[3] + '\n',
+          message: lineMatches[3],
           error: 'E:' + lineMatches[2],
           ready: false
         };
@@ -63,9 +61,8 @@ module.exports = function (runnable, args, options) {
         lastError = errorObject;
         match = true;
       }
-
       if (!match) {
-        lastError.message = '    ' + line;
+        lastError.message = lastError.message + ' ' + line;
       }
       match = false;
     }

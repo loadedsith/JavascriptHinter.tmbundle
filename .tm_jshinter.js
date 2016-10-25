@@ -4,11 +4,14 @@
 module.exports = {
   disabledPlugins: ['eslint'],
   ignored: [
-    '.git',
-    'node_modules',
-    'dist',
+    '.git/**',
+    '.gitignore',
+    'node_modules/**',
+    // '!(node_modules)',
+    'dist/**',
     '.DS_store',
-    'build',
+    'build/**',
+    'Support/node_modules/**',
     '.jshintrc',
     '.jshintignore',
     '.*.min.js',

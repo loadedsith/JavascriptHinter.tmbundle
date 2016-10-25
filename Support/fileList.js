@@ -7,16 +7,15 @@ var fileList = function (dir, ignoredFiles) {
     ignoredFiles = [];
   }
 
-  var files = glob.sync(dir + "/**/*",
+  var files = glob.sync('**',
     {
       'ignore': ignoredFiles,
-      // 'cwd': dir,
-      'nodir': true,
+      'cwd': dir,
+      'nodir': true
     }
   );
 
   return files
-
 };
 
 /**

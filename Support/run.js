@@ -103,7 +103,12 @@ var getRunners = function () {
          );
 
         if (fileExt === extension) {
-          connectors.push(plugin.process([file], (options[plugin.name] || {})));
+          options.cwd = cmdOpts.options.directory || '';
+          connectors.push(
+              plugin.process(
+                  [options.cwd + file], (options[plugin.name] || {})
+              )
+          );
         }
       });
     });

@@ -9,23 +9,33 @@ var Q = require('q'),
 
 
 var getJsonOutput = function (runnable, args, options) {
-  var def = Q.defer(),
-    dataConcat = '',
-    proc = cp.spawn(runnable, args, options || {});
+  var def = Q.defer();
+  var dataConcat = '';
 
-  proc.stdout.on('data', function (data) {
-    dataConcat = dataConcat + data;
-  });
+  var proc = cp.spawn(runnable, args, options || {});
+  try {
+    proc.stdout.on('data', function (data) {
+      dataConcat = dataConcat + data;
+    });
 
-  proc.on('close', function () {
-    var jsonData;
-    try {
-      jsonData = JSON.parse(dataConcat);
-    } catch (e) {
-      jsonData = [];
-    }
-    def.resolve(jsonData);
-  });
+    proc.on('close', function () {
+      var jsonData;
+      try {
+        jsonData = JSON.parse(dataConcat);
+      } catch (e) {
+        jsonData = [];
+      }
+      def.resolve(jsonData);
+    });
+
+  } catch (e) {
+    console.log('error executing getJsonOutput');
+    console.log('runnable', runnable);
+    console.log('args', args);
+    console.log('options', options);
+    console.log('proc', proc);
+    def.resolve([]);
+  }
 
   return def.promise;
 };
