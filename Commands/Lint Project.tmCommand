@@ -7,7 +7,7 @@
   <key>command</key>
   <string>#!/usr/bin/env bash
   [[ -f "${TM_SUPPORT_PATH}/lib/bash_init.sh" ]] &amp;&amp; . "${TM_SUPPORT_PATH}/lib/bash_init.sh"
-
+  [[ -f "${HOME}/.nvm/nvm.sh" ]] &amp;&amp; . "${HOME}/.nvm/nvm.sh"
   cd "${TM_BUNDLE_SUPPORT}"
   node run.js -d "${JSHINTER_DISABLE_PLUGINS}" -r default -z "${TM_PROJECT_DIRECTORY:=TM_DIRECTORY}"
 
