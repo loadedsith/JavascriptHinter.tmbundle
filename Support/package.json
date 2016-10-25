@@ -1,11 +1,12 @@
 {
-  "name": "textmate-javascript-hinter",
+  "name": "textmate-linter",
   "version": "0.0.1",
-  "description": "Textmate javascript hinter runner",
+  "description": "Textmate linter runner",
   "repository": {
     "type": "git",
-    "url": "http://github.com/bodnaristvan/JavascriptHinter.git"
+    "url": "http://github.com/loadedsith/JavascriptHinter.git"
   },
+  "engine":"6.6.*",
   "dependencies": {
     "glob": "7.1.*",
     "handlebars": "*",
