@@ -9,7 +9,8 @@ module.exports = function (errorsCollection) {
     // check per file
     if (!errors.isEmpty()) {
       // check per error
-      errorReport = errorReport.concat(errors.getErrorList().map(function (error) {
+      errorReport = errorReport.concat(errors.getErrorList()
+          .map(function (error) {
         return {
           hinttype: 'jscs',
           file: errors.getFilename(),

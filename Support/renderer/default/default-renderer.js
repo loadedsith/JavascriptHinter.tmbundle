@@ -5,8 +5,7 @@
  * @return {Object}
  */
 var Updater = function () {
-  var updateUrl = 'https://raw.githubusercontent.com/bodnaristvan/' +
-      'JavascriptHinter.tmbundle/master/Support/version.json',
+  var updateUrl = 'https://raw.githubusercontent.com/loadedsith/' + 'JavascriptHinter.tmbundle/master/Support/version.json',
     // check for udpdates daily (1000 * 60 * 60 * 24)
     updateFrequency = 86400000,
     compareVersions,
