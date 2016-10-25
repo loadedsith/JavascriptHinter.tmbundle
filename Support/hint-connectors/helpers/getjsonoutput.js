@@ -13,29 +13,29 @@ var getJsonOutput = function (runnable, args, options) {
   var dataConcat = '';
 
   var proc = cp.spawn(runnable, args, options || {});
-  try {
-    proc.stdout.on('data', function (data) {
-      dataConcat = dataConcat + data;
-    });
-
-    proc.on('close', function () {
-      var jsonData;
-      try {
-        jsonData = JSON.parse(dataConcat);
-      } catch (e) {
-        jsonData = [];
-      }
-      def.resolve(jsonData);
-    });
-
-  } catch (e) {
-    console.log('error executing getJsonOutput');
-    console.log('runnable', runnable);
+  proc.on('error', function(e) {
+    console.log('error executing linter.');
+    console.log('Linter: ', runnable);
     console.log('args', args);
     console.log('options', options);
-    console.log('proc', proc);
+    console.log('Error', e);
     def.resolve([]);
-  }
+  });
+
+  proc.stdout.on('data', function (data) {
+    dataConcat = dataConcat + data;
+  });
+
+  proc.on('close', function () {
+    var jsonData;
+    try {
+      jsonData = JSON.parse(dataConcat);
+    } catch (e) {
+      jsonData = [];
+    }
+    def.resolve(jsonData);
+  });
+
 
   return def.promise;
 };
