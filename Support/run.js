@@ -61,12 +61,12 @@ var getOptions = function () {
  * @return {Array<Object>}
  */
 var getRunners = function () {
-  var plugins,
-    options = getOptions(),
-    disabledPlugins,
-    files = cmdOpts.argv,
-    pluginPath = cmdOpts.options['plugin-path'],
-    connectors = [];
+  var plugins;
+  var options = getOptions();
+  var disabledPlugins;
+  var files = cmdOpts.argv;
+  var pluginPath = cmdOpts.options['plugin-path'];
+  var connectors = [];
 
   if (!options) {
     throw new Error('Configuration file not found, aborting.');

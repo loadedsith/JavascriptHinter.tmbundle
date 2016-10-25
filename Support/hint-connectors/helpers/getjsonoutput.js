@@ -14,7 +14,7 @@ var getJsonOutput = function (runnable, args, options) {
 
   var proc = cp.spawn(runnable, args, options || {});
   proc.on('error', function(e) {
-    console.log('error executing linter.');
+    console.log('error executing linter. Is ' + runnable + 'installed?');
     console.log('Linter: ', runnable);
     console.log('args', args);
     console.log('options', options);
