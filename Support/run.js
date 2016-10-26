@@ -64,11 +64,11 @@ var getOptions = function () {
 
 /**
  * Connect Plugins to JSON output handling.
- * @param {csp.chan} runnerCh
  * @param {csp.chan} pluginCh
+ * @param {csp.chan} runnerCh
  * @param {Array<string>} files
  */
-var pluginsToRunner = function* (runnerCh, pluginCh, files) {
+var pluginsToRunner = function* (pluginCh, runnerCh, files) {
   var options = getOptions();
   options.cwd = cmdOpts.options.directory || '';
 
@@ -86,8 +86,8 @@ var pluginsToRunner = function* (runnerCh, pluginCh, files) {
   csp.takeAsync(pluginCh, function (plugin) {
     for (var i = 0; i < files.length; i++) {
       var file = files[i];
-      for (var i = 0; i < plugin.extensions.length; i++) {
-        extension = plugin.extensions[i];
+      for (var ii = 0; ii < plugin.extensions.length; ii++) {
+        extension = plugin.extensions[ii];
         var fileExt = file.substring(
           file.length,
           (file.length - 1) - (extension.length - 1)
@@ -167,11 +167,11 @@ var getCmdOpts = function () {
 
 cmdOpts = getCmdOpts();
 
-var jsonCh = csp.chan();
+var runnerCh = csp.chan();
 var pluginCh = csp.chan();
 var resultsCh = csp.chan();
 var files = cmdOpts.argv;
 
-csp.go(pluginsToRunner, [pluginCh, jsonCh, files]);
-csp.go(runnerToResults, [pluginCh, resultsCh]);
+csp.go(pluginsToRunner, [pluginCh, runnerCh, files]);
+csp.go(runnerToResults, [runnerCh, resultsCh]);
 csp.go(render, [resultsCh]);

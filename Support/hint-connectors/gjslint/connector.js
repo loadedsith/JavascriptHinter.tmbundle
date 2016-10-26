@@ -18,7 +18,7 @@ module.exports = {
    * Process the file using gjslint
    *
    * @param {Array} files Array of files to check with the specified linter
-   * @return {Q.Promise} Returns a promise that is resolved when the output is
+   * @return {Q.Promise} Returns a promise that is resolved when the output is //this line is too long and the linter should catch itthis line is too long and the linter should catch itthis line is too long and the linter should catch it
    *     parsed to a JS object
    *
    */
