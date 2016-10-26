@@ -1,3 +1,5 @@
+var csp = require('js-csp');
+
 var fileList = require('./fileList');
 
 /**
@@ -9,9 +11,8 @@ module.exports = {
    *
    * @param {?String} dir Starting directory to load plugins from
    *     (defaults to './hint-connectors/').
-   * @return {Array<Object>} The plugins found in the pluginPath.
    */
-  getPlugins: function (pluginPath) {
+  * getPlugins (ch, pluginPath, disabledPlugins) {
     var plugins = [];
     var connectorName = 'connector.js';
 
@@ -19,14 +20,17 @@ module.exports = {
       pluginPath = process.env.PWD + '/hint-connectors/';
     }
 
-    fileList(pluginPath).forEach(function (filePath) {
+    var filePaths = fileList(pluginPath);
+
+    for (var i = 0; i < filePaths.length; i++) {
+      var filePath = filePaths[i];
       var pluginNameLength = filePath.length - connectorName.length;
       if (filePath.indexOf(connectorName) === pluginNameLength) {
         var plugin = require(pluginPath + filePath);
-        plugins.push(plugin);
+        if (disabledPlugins.indexOf(plugin.name) === -1) {
+          yield csp.putAsync(ch, plugin);
+        }
       }
-    });
-
-    return plugins;
+    }
   }
 };

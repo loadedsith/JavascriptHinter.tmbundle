@@ -1,12 +1,15 @@
-var Q = require('q'),
-  getopt = require('node-getopt'),
-  fileList = require('./fileList'),
-  pluginsLoader = require('./plugins-loader'),
-  cmdOpts = {},
-  getCmdOpts,
-  getRunners,
-  getJson,
-  render;
+var Q = require('q');
+var getopt = require('node-getopt');
+var fileList = require('./fileList');
+var pluginsLoader = require('./plugins-loader');
+var csp = require('js-csp');
+var cmdOpts = {};
+var getCmdOpts;
+var getRunners;
+var getJson;
+var render;
+
+var connectorCh = csp.chan();
 
 /**
   * Get configuration file, in this order:
@@ -84,35 +87,36 @@ var getRunners = function () {
     files = [files];
   }
 
-  plugins = pluginsLoader.getPlugins(pluginPath);
-  disabledPlugins = options.disabledPlugins || [];
-
-  files.forEach(function (file) {
-    plugins.forEach(function (plugin) {
-      if (disabledPlugins.indexOf(plugin.name) !== -1) {
-        if (cmdOpts.options.debug) {
-          console.log('disabled', plugin.name);
-        }
-        return;
+  // Create a channel for plugins to flow into, looping over the exisiting files
+  var ch = csp.chan();
+  csp.go(function* (plugin) {
+    while (plugin = yield csp.take(ch)) {
+    console.log('plugin', plugin);
+      if (plugin.closed) {
+        break;
       }
 
-      plugin.extensions.forEach(function (extension) {
-        var fileExt = file.substring(
-          file.length,
-          (file.length - 1) - (extension.length - 1)
-         );
+      files.forEach(function (file) {
+        plugin.extensions.forEach(function (extension) {
+          var fileExt = file.substring(
+            file.length,
+            (file.length - 1) - (extension.length - 1)
+           );
 
-        if (fileExt === extension) {
-          options.cwd = cmdOpts.options.directory || '';
-          connectors.push(
-              plugin.process(
-                  [options.cwd + file], (options[plugin.name] || {})
+          if (fileExt === extension) {
+            options.cwd = cmdOpts.options.directory || '';
+            csp.putAsync(connectorCh, plugin.process.call(this,
+                [options.cwd + file], (options[plugin.name] || {})
               )
-          );
-        }
+            );
+          }
+        });
       });
-    });
+    }
   });
+
+  csp.go(pluginsLoader.getPlugins, [ch, pluginPath, options.disabledPlugins]);
+  console.log('Legendary Red Housekeeper halfback red kangaroo');
 
   return connectors;
 };
@@ -184,9 +188,15 @@ var getCmdOpts = function () {
 
   cmdOpts = getCmdOpts();
 
-  Q.fcall(getRunners)
-    .then(getJson)
-    .then(render)
-    .done();
+  Q.fcall(getRunners);
+  csp.takeAsync(connectorCh, function(pluginRunner) {
+    console.log('pluginRunner()', pluginRunner.then(getJson).then(function(a,b,c) {
+      console.log('a, b, c', a, b, c);
+    }));
+  })
+    // .then(getJson)
+    // .then(getJson)
+  //   .then(render)
+  //   .done();
 }());
 

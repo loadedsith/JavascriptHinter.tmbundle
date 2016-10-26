@@ -38,5 +38,6 @@ module.exports = {
     return getJsonGJSLintOutput('gjslint', args, {
       cwd: options.cwd || fileDir || '',
     });
-  }
+  },
+  debug: 'this line is too long and the linter should catch itthis line is too long and the linter should catch itthis line is too long and the linter should catch it'
 };
