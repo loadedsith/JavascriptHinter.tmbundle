@@ -70,7 +70,11 @@ var getOptions = function () {
  */
 var pluginsToRunner = function* (pluginCh, runnerCh, files) {
   var options = getOptions();
-  options.cwd = cmdOpts.options.directory || '';
+
+  options.cwd = '';
+  if (cmdOpts.options.directory) {
+    options.cwd = cmdOpts.options.directory + '/';
+  }
 
   if (files.length === 0) {
     files = fileList(cmdOpts.options.directory, options.ignored);
@@ -94,6 +98,8 @@ var pluginsToRunner = function* (pluginCh, runnerCh, files) {
         );
 
         if (fileExt === extension) {
+          console.log('<br><br><br><br>plugin.name+file',
+               plugin.name + options.cwd + file);
           csp.putAsync(runnerCh, {
             process: plugin.process,
             arg: [[options.cwd + file], (options[plugin.name] || {}) ]
@@ -114,8 +120,10 @@ var pluginsToRunner = function* (pluginCh, runnerCh, files) {
  * @param {js-csp.chan} resultsCh
  */
 var runnerToResults = function* (runnerCh, resultsCh) {
-  csp.takeAsync(runnerCh, function(pluginRunner, b, c, s) {
+  yield csp.takeAsync(runnerCh, function(pluginRunner) {
+    console.log('<br><br><br><br>pluginRunner');
     pluginRunner.process.apply(null, pluginRunner.arg).then(function(results) {
+      console.log('<br><br><br><br>then');
       csp.putAsync(resultsCh, results);
     });
   });
@@ -137,13 +145,15 @@ var render = function* (resultsCh, jsonData) {
     reporter = require('./renderer/default/renderer');
     break;
   }
-  csp.takeAsync(resultsCh, function(jsonData) {
+  yield csp.takeAsync(resultsCh, function(jsonData) {
+    console.log('resultsCh,jsonData', resultsCh,jsonData);
     reporter(jsonData);
     // render gutter
     if (process.env.TM_MATE) {
       gutterReporter = require('./renderer/gutter/renderer');
       gutterReporter(jsonData);
     }
+    resultsCh.close();
   });
 };
 
@@ -174,4 +184,4 @@ var files = cmdOpts.argv;
 
 csp.go(pluginsToRunner, [pluginCh, runnerCh, files]);
 csp.go(runnerToResults, [runnerCh, resultsCh]);
-csp.go(render, [resultsCh]);
+csp.go(render,[resultsCh]);

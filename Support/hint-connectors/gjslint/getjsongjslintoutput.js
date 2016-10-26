@@ -20,6 +20,15 @@ module.exports = function (runnable, args, options) {
   var def = Q.defer();
   var error = '';
   var proc = cp.spawn(runnable, args, options || {});
+  proc.on('error', function(e) {
+    console.log('<br>error executing linter. Is ' + runnable + 'installed?');
+    console.log('<br>Linter: ', runnable);
+    console.log('<br>args', args);
+    console.log('<br>options', options);
+    console.log('<br>Error', e);
+    def.resolve([]);
+  });
+
   proc.stdout.on('data', function (data) {
     error = error + data;
   });
