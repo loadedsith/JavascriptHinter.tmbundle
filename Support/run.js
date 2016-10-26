@@ -9,8 +9,6 @@ var getRunners;
 var getJson;
 var render;
 
-var connectorCh = csp.chan();
-
 /**
   * Get configuration file, in this order:
   *   - From the command line flag '-c'
@@ -55,96 +53,82 @@ var getOptions = function () {
       }
     }
   }
-  return options;
-};
-
-
-/**
- * Get the list of hint runner promises.
- * @return {Array<Object>}
- */
-var getRunners = function () {
-  var plugins;
-  var options = getOptions();
-  var disabledPlugins;
-  var files = cmdOpts.argv;
-  var pluginPath = cmdOpts.options['plugin-path'];
-  var connectors = [];
 
   if (!options) {
     throw new Error('Configuration file not found, aborting.');
   }
 
+  return options;
+};
+
+
+/**
+ * Connect Plugins to JSON output handling.
+ * @param {csp.chan} runnerCh
+ * @param {csp.chan} pluginCh
+ * @param {Array<string>} files
+ */
+var pluginsToRunner = function* (runnerCh, pluginCh, files) {
+  var options = getOptions();
+  options.cwd = cmdOpts.options.directory || '';
+
   if (files.length === 0) {
     files = fileList(cmdOpts.options.directory, options.ignored);
-  }
-
-  if (!files) {
-    return;
+    if (!files) {
+      return;
+    }
   }
 
   if (!files.forEach) {
     files = [files];
   }
 
-  // Create a channel for plugins to flow into, looping over the exisiting files
-  var ch = csp.chan();
-  csp.go(function* (plugin) {
-    while (plugin = yield csp.take(ch)) {
-    console.log('plugin', plugin);
-      if (plugin.closed) {
-        break;
+  csp.takeAsync(pluginCh, function (plugin) {
+    for (var i = 0; i < files.length; i++) {
+      var file = files[i];
+      for (var i = 0; i < plugin.extensions.length; i++) {
+        extension = plugin.extensions[i];
+        var fileExt = file.substring(
+          file.length,
+          (file.length - 1) - (extension.length - 1)
+        );
+
+        if (fileExt === extension) {
+          csp.putAsync(runnerCh, {
+            process: plugin.process,
+            arg: [[options.cwd + file], (options[plugin.name] || {}) ]
+          });
+        }
       }
-
-      files.forEach(function (file) {
-        plugin.extensions.forEach(function (extension) {
-          var fileExt = file.substring(
-            file.length,
-            (file.length - 1) - (extension.length - 1)
-           );
-
-          if (fileExt === extension) {
-            options.cwd = cmdOpts.options.directory || '';
-            csp.putAsync(connectorCh, plugin.process.call(this,
-                [options.cwd + file], (options[plugin.name] || {})
-              )
-            );
-          }
-        });
-      });
     }
   });
 
-  csp.go(pluginsLoader.getPlugins, [ch, pluginPath, options.disabledPlugins]);
-  console.log('Legendary Red Housekeeper halfback red kangaroo');
-
-  return connectors;
+  csp.go(pluginsLoader.getPlugins,
+    [ pluginCh, cmdOpts.options['plugin-path'], options.disabledPlugins ]
+  );
 };
 
 /**
  * Merge data coming back from hint runner promises
- * @param {Array<Object>} runners Output from runners, to be converted to JSON.
- * @return {Q.Promise} Returns a promise that is resolved when the output is
- *   gathered.
+ * @param {js-csp.chan} runnerCh
+ * @param {js-csp.chan} resultsCh
  */
-var getJson = function (runners) {
-  var def = Q.defer();
-  Q.spread(runners, function () {
-    var data = [];
-    Array.prototype.slice.call(arguments).forEach(function (retval) {
-      data = data.concat(retval);
+var runnerToResults = function* (runnerCh, resultsCh) {
+  csp.takeAsync(runnerCh, function(pluginRunner, b, c, s) {
+    pluginRunner.process.apply(null, pluginRunner.arg).then(function(results) {
+      csp.putAsync(resultsCh, results);
     });
-    def.resolve(data);
   });
-  return def.promise;
 };
 
 /**
  * Render data with the requested renderer
+ * @param {js-csp} resultsCh
  * @param {Object} jsonData JSON array of errors to be renedered.
  */
-var render = function (jsonData) {
-  var reporter, gutterReporter;
+var render = function* (resultsCh, jsonData) {
+  var reporter;
+  var gutterReporter;
   switch (cmdOpts.options.renderer) {
   case 'tooltip':
     reporter = require('./renderer/tooltip/renderer');
@@ -153,13 +137,14 @@ var render = function (jsonData) {
     reporter = require('./renderer/default/renderer');
     break;
   }
-  reporter(jsonData);
-
-  // render gutter
-  if (process.env.TM_MATE) {
-    gutterReporter = require('./renderer/gutter/renderer');
-    gutterReporter(jsonData);
-  }
+  csp.takeAsync(resultsCh, function(jsonData) {
+    reporter(jsonData);
+    // render gutter
+    if (process.env.TM_MATE) {
+      gutterReporter = require('./renderer/gutter/renderer');
+      gutterReporter(jsonData);
+    }
+  });
 };
 
 /**
@@ -180,23 +165,13 @@ var getCmdOpts = function () {
   .parseSystem();
 };
 
+cmdOpts = getCmdOpts();
 
-/**
- * Run the process
- */
-(function () {
+var jsonCh = csp.chan();
+var pluginCh = csp.chan();
+var resultsCh = csp.chan();
+var files = cmdOpts.argv;
 
-  cmdOpts = getCmdOpts();
-
-  Q.fcall(getRunners);
-  csp.takeAsync(connectorCh, function(pluginRunner) {
-    console.log('pluginRunner()', pluginRunner.then(getJson).then(function(a,b,c) {
-      console.log('a, b, c', a, b, c);
-    }));
-  })
-    // .then(getJson)
-    // .then(getJson)
-  //   .then(render)
-  //   .done();
-}());
-
+csp.go(pluginsToRunner, [pluginCh, jsonCh, files]);
+csp.go(runnerToResults, [pluginCh, resultsCh]);
+csp.go(render, [resultsCh]);
