@@ -1,4 +1,4 @@
-{{#if numErrors}}JavascriptHinter found {{numErrors}} problems:
+{{#if numErrors}}{{hinttype}} found {{numErrors}} problems:
 
 {{#each errors}}[{{hinttype}}] Line {{line}}: {{{message}}}
 {{/each}}

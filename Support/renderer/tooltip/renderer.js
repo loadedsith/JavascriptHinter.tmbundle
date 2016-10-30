@@ -1,9 +1,9 @@
 /* jshint node: true */
-(function () {
+(function() {
   'use strict';
 
-  var fs = require('fs'),
-    Handlebars = require('handlebars');
+  const fs = require('fs');
+  const Handlebars = require('handlebars');
 
   function render(errors, config) {
     // Create a empty default config object if none was supplied.
@@ -11,16 +11,18 @@
     config = config || {
       maxToolTipResults: 10
     };
+    var rendererDir = require('path').dirname(__filename);
+    var content = fs.readFileSync(rendererDir + '/tooltip-renderer.html', 'utf8');
+    var template = Handlebars.compile(content);
 
-    var rendererDir = require('path').dirname(__filename),
-      content = fs.readFileSync(rendererDir + '/tooltip-renderer.html', 'utf8'),
-      template = Handlebars.compile(content);
+    let result = {};
+    if (errors.length) {
+      result.hinttype = errors[0].hinttype;
+      result.numErrors = errors.length;
+      result.errors = errors.slice(0, config.maxToolTipResults || 5);
+    }
 
-    process.stdout.write(template({
-      // only return the first 5 errors for each file
-      errors: errors.slice(0, config.maxToolTipResults || 5),
-      numErrors: errors.length
-    }));
+    process.stdout.write(template(result));
   }
 
   module.exports = function (errors) {

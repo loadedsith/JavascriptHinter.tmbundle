@@ -2,7 +2,7 @@
  * JavascriptHinter plugin settings.
  */
 module.exports = {
-  disabledPlugins: ['gjslint'],
+  disabledPlugins: ['gjslint', 'jscs'],
   ignored: [
     '.git/**',
     '.gitignore',
@@ -17,11 +17,11 @@ module.exports = {
     '.*.min.js',
     '.*.min.css'
   ],
-  eslint: {
-    args: [
-      '--config', '/Users/heathg/.eslintrc'
-    ]
-  },
+  // eslint: {
+    // args: [
+      // '--config', (process.env.TM_PROJECT_DIRECTORY || process.env.HOME) + '/../.eslintrc'
+    // ]
+  // },
   gjslint: {
     args: [
       '--disable', '0005,0001'

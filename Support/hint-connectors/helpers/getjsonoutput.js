@@ -3,16 +3,15 @@
  * The expected output from the linter is JSON that can be parsed by the
  * renderer.
  */
-var Q = require('q'),
-  cp = require('child_process'),
-  getJsonOutput;
+const Q = require('q');
+const cp = require('child_process');
 
-
-var getJsonOutput = function (runnable, args, options) {
-  var def = Q.defer();
-  var dataConcat = '';
+const getJsonOutput = function (runnable, args, options) {
+  let def = Q.defer();
+  let dataConcat = '';
 
   var proc = cp.spawn(runnable, args, options || {});
+
   proc.on('error', function(e) {
     console.log('error executing linter. Is ' + runnable + 'installed?');
     console.log('Linter: ', runnable);
@@ -31,11 +30,12 @@ var getJsonOutput = function (runnable, args, options) {
     try {
       jsonData = JSON.parse(dataConcat);
     } catch (e) {
+      console.log(`Error running ${runnable}: dataConcat: ${dataConcat}.`);
+      console.log(`Error running ${runnable}: e: ${e}.`);
       jsonData = [];
     }
     def.resolve(jsonData);
   });
-
 
   return def.promise;
 };

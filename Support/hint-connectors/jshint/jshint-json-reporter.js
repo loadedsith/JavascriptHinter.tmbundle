@@ -16,6 +16,7 @@ module.exports = {
         rule: error.code
       };
     });
+
     process.stdout.write(JSON.stringify(report) + '\n');
   }
 };

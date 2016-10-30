@@ -1,0 +1,172 @@
+{
+  // http://eslint.org/docs/rules/
+  "extends": "google",
+  "installedESLint": true,
+  "env": {
+    "browser": false,      // browser global variables.
+    "node": true,        // Node.js global variables and Node.js-specific rules.
+    "worker": false,      // web workers global variables.
+    "amd": false,         // defines require() and define() as global variables as per the amd spec.
+    "mocha": false,       // adds all of the Mocha testing global variables.
+    "jasmine": false,     // adds all of the Jasmine testing global variables for version 1.3 and 2.0.
+    "phantomjs": false,   // phantomjs global variables.
+    "jquery": false,      // jquery global variables.
+    "prototypejs": false, // prototypejs global variables.
+    "shelljs": false,     // shelljs global variables.
+    "meteor": false,      // meteor global variables.
+    "mongo": false,       // mongo global variables.
+    "applescript": false, // applescript global variables.
+    "es6": true,         // enable all ECMAScript 6 features except for modules.
+  },
+
+  "globals": {
+    "goog": true,
+    "angular": true,
+    "glue": true
+  },
+
+  "plugins": [
+    // e.g. "react" (must run `npm install eslint-plugin-react` first)
+    "jsdoc",
+    "angular"
+  ],
+
+  "rules": {
+
+    // Picked up from looking at other .eslint files at Google
+    // Require strings to use single quotes
+    "quotes": [2, "single"],
+    // Disallow using variables and functions before they have been defined
+    "no-use-before-define": 2,
+    // Allow any case for variable naming
+    "camelcase": 0,
+    // Disallow unused variables, except as function arguments
+    "no-unused-vars": [2, {"args":"none"}],
+    // Allow leading underscores for method names
+    // REASON: we use underscores to denote private methods
+    "no-underscore-dangle": 0,
+    // Allow multi spaces around operators since they are
+    // used for alignment.  This is not consistent in the
+    // code.
+    "no-multi-spaces": 0,
+    // Style rule is: most objects use { beforeColon: false, afterColon: true }, unless aligning which uses:
+    //
+    // {
+    //   beforeColon : true,
+    //   afterColon  : true
+    // }
+    //
+    // eslint cannott handle this, so the check is disabled.
+    "key-spacing": 0,
+    // Allow shadowing vars in outer scope (needs discussion)
+    "no-shadow": 0,
+    // Use if () { }
+    //       ^ space
+    "keyword-spacing": [2, {"after": true}],
+    // Use if () { }
+    //          ^ space
+    "space-before-blocks": [2, "always"],
+
+    // Possible Errors
+    "no-extra-semi": 0,            // disallow unnecessary semicolons
+
+
+    "no-console": 1,
+    "no-dupe-args": 2,
+    "no-unsafe-negation": 2,
+    "no-dupe-keys": 2,
+    "no-duplicate-case": 2,
+    "no-empty": 2,
+    "no-extra-boolean-cast": 1,
+    "no-extra-parens": 1,
+    "no-undefined": 2,
+    'no-multiple-empty-lines': [2, {
+			max: 3
+		}],
+    "global-require": 2,
+    "block-spacing": ["error", "never"],
+    "consistent-this": [1, "bad"],
+    "line-comment-position": [1, { "position": "above" }],
+    "newline-after-var": [1, "always"],
+    "newline-before-return": 1,
+    "newline-per-chained-call": [2, { "ignoreChainWithDepth": 2 }],
+    'object-property-newline': 1,
+    "require-jsdoc": [1, {
+      "require": {
+        "FunctionDeclaration": true,
+        "MethodDefinition": true,
+        "ClassDeclaration": true
+      }
+    }],
+    "sort-keys": [1, "asc", {caseSensitive: false}],
+    sort-vars: [1, { "ignoreCase": true }],
+    "padded-blocks": [1, "never"],
+    "brace-style": [2, "1tbs", { "allowSingleLine": true }],
+    "max-statements-per-line": [1, { "max": 2 }],
+
+
+    // Best Practices
+    "curly": 2,                 // specify curly brace conventions for all control statements
+    "no-eval": 2,               // disallow use of eval()
+    "no-extend-native": 2,      // disallow adding to native types
+    "no-new-wrappers": 2,       // disallows creating new instances of String, Number, and Boolean
+    "no-with": 2,               // disallow use of the with statement
+
+
+    // Strict Mode
+
+
+    // Variables
+    "no-undef": 2,                   // disallow use of undeclared variables unless mentioned in a /*global */ block
+
+
+    // Node.js
+
+
+    // Stylistic Issues
+    "array-bracket-spacing": [2, "never"], // enforce spacing inside array brackets (off by default)
+    "indent": [1, 2, {"SwitchCase": 1}],                      // this option sets a specific tab width for your code (off by default)
+    "no-array-constructor": 2,             // disallow use of the Array constructor
+    "no-mixed-spaces-and-tabs": 2,         // disallow mixed spaces and tabs for indentation
+    "no-new-object": 2,                    // disallow use of the Object constructor
+    "object-curly-spacing": [2, "never"],  // require or disallow padding inside curly braces (off by default)
+    "semi": 2,                  // require or disallow use of semicolons instead of ASI
+
+    // ECMAScript 6
+
+
+    // Legacy
+    "max-len": [1, 80, 2], // specify the maximum length of a line in your program (off by default),
+
+    valid-jsdoc: ["error",
+      { "preferType": {
+         "Boolean": "boolean",
+          "Number": "number",
+          "object": "Object",
+          "String": "string",
+          "angular.scope": "!angular.Scope",
+          "Angular.scope": "!angular.Scope",
+          "Angular.Scope": "!angular.Scope",
+          "angular.Element": "!angular.element",
+          "Angular.Element": "!angular.element",
+          "Angular.element": "!angular.element",
+          "Event": "!event",
+          "HtmlElement": "HTMLElement",
+
+        },
+        "prefer": {
+          "arg": "param",
+          "argument": "param",
+          "class": "constructor",
+          "returns": "return",
+          "virtual": "abstract"
+        },
+        "requireReturnType": true,
+        "requireParamDescription": true,
+        "requireReturnDescription": true,
+        "matchDescription": "^[A-Z][^\\.!\\?]*[\\.!\\?]+",
+        "requireReturn": false
+      }
+    ]
+  }
+}

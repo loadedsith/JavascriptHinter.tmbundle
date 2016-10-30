@@ -106,9 +106,8 @@ var pluginsToRunner = function* (pluginCh, runnerCh, files, options, cmdOpts) {
 var runnerToResults = function* (runnerCh, resultsCh) {
   let pluginRunner;
   while((pluginRunner = yield csp.take(runnerCh))) {
-    pluginRunner.process.apply(null, pluginRunner.arg).then(function(results) {
-      csp.putAsync(resultsCh, results);
-    });
+    yield csp.put(resultsCh,
+        pluginRunner.process.apply(null, pluginRunner.arg));
   }
 };
 
@@ -129,14 +128,15 @@ var render = function* (resultsCh) {
     break;
   }
   let jsonData;
-  while((jsonData = yield csp.take(resultsCh))){
-    reporter(jsonData);
-    // render gutter
-    if (process.env.TM_MATE) {
-      gutterReporter = require('./renderer/gutter/renderer');
-      gutterReporter(jsonData);
-    }
-    resultsCh.close();
+
+  while((result = yield csp.take(resultsCh))){
+    result.then((jsonData)=> {
+      reporter(jsonData);
+      if (process.env.TM_MATE) {
+        gutterReporter = require('./renderer/gutter/renderer');
+        gutterReporter(jsonData);
+      }
+    })
   }
 };
 

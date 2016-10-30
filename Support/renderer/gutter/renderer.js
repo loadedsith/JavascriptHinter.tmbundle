@@ -43,7 +43,8 @@
     // https://github.com/textmate/textmate/commit/65e72d9ed210c5ba91c4d3b39392059047c5f516
     args = [
       '--clear-mark', gutterImage,
-      '--line', getErrorLines(errors).join(','), '--set-mark', gutterImage,
+      '--line', getErrorLines(errors).join(','),
+      '--set-mark', gutterImage,
       currentFile
     ];
 

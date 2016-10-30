@@ -4,9 +4,9 @@
  * Runs the installed eslint version with the default JSON reporter and parses
  * the output into a JS object.
  */
-var path = require('path');
-var getJsonOutput = require('../helpers/getjsonoutput');
-var Q = require('q');
+const path = require('path');
+const getJsonOutput = require('../helpers/getjsonoutput');
+const Q = require('q');
 
 
 /**
@@ -14,61 +14,61 @@ var Q = require('q');
  * @type {tmJavaScriptHinter.plugin}
  */
 module.exports = {
-  name: 'eslint',
   extensions: ['.js'],
+  name: 'eslint',
   /**
-   * Process the file using eslint
+   * Process the file using eslint.
    * @param {Array} files Array of files to check with the specified linter
    * @param {Object} options Configuration options for the current linter.
    * @return {Q.Promise} Returns a promise that is resolved when the output is
    *   parsed to a JS object
    */
-  process: function (files, options) {
-    var def = Q.defer();
-    var fileDir = path.dirname(files[0]);
-
-    var args = ['--format', 'JSON'];
+  process: function(files, options) {
+    let def = Q.defer();
+    let fileDir = path.dirname(files[0]);
+    let args = ['--format', 'JSON'];
 
     if (options.args) {
-      options.args.forEach(function (arg) {
+      options.args.forEach(function(arg) {
         args.push(arg);
       });
     }
 
     args = args.concat(files);
-    var originalOutput = getJsonOutput('eslint', args, {cwd: fileDir});
+    let originalOutput = getJsonOutput('eslint', args, {cwd: fileDir});
 
     /**
      * Original JSON output needs to be transformed so it can be used with the
      * default renderer & tooltip
      */
     originalOutput
-      .then(function (output) {
-        var errors = [];
-        var fileErrors = output.map(function (file) {
-          return file.messages.map(function (message) {
+      .then(function(output) {
+        let errors = [];
+        let fileErrors = output.map(function(file) {
+          return file.messages.map(function(message) {
             return {
-              hinttype: 'eslint',
-              file: file.filePath,
-              line: message.line,
               column: message.column,
               evidence: message.source || '',
+              file: file.filePath,
+              hinttype: 'eslint',
+              line: message.line,
               message: message.message +
                   (message.linter ? ' (' + message.linter + ')' : ''),
-              rule: file.code
+              rule: file.code,
             };
           });
         });
 
-        for (var i = fileErrors.length - 1; i >= 0; i--) {
-          for (var ii = fileErrors[i].length - 1; ii >= 0; ii--) {
-            errors.push(fileErrors[i][ii]);
+        for (let fileError of fileErrors) {
+          for (let error of fileError) {
+            errors.push(error);
           }
         }
 
         def.resolve(errors);
       }, def.reject)
       .done();
+
     return def.promise;
-  }
+  },
 };
