@@ -28,7 +28,7 @@ module.exports = {
       if (filePath.indexOf(connectorName) === pluginNameLength) {
         var plugin = require(pluginPath + filePath);
         if (disabledPlugins.indexOf(plugin.name) === -1) {
-          yield csp.putAsync(ch, plugin);
+          yield csp.put(ch, plugin);
         }
       }
     }
