@@ -1,4 +1,3 @@
-var Q = require('q');
 var getopt = require('node-getopt');
 var path = require('path');
 var fileList = require('./fileList');
@@ -6,8 +5,6 @@ var pluginsLoader = require('./plugins-loader');
 var csp = require('js-csp');
 var cmdOpts = {};
 var getCmdOpts;
-var getRunners;
-var getJson;
 var render;
 
 /**
@@ -70,13 +67,6 @@ var getOptions = function () {
  * @param {Array<string>} files
  */
 var pluginsToRunner = function* (pluginCh, runnerCh, files, options, cmdOpts) {
-  var options = getOptions();
-
-  options.cwd = '';
-  if (cmdOpts.options.directory) {
-    options.cwd = cmdOpts.options.directory + '/';
-  }
-
   if (files.length === 0) {
     files = fileList(cmdOpts.options.directory, options.ignored);
     if (!files) {
@@ -89,7 +79,7 @@ var pluginsToRunner = function* (pluginCh, runnerCh, files, options, cmdOpts) {
   }
 
   let plugin;
-  while(plugin = yield csp.take(pluginCh)) {
+  while((plugin = yield csp.take(pluginCh))) {
     if (plugin === csp.CLOSED) {
       break;
     }
@@ -115,7 +105,7 @@ var pluginsToRunner = function* (pluginCh, runnerCh, files, options, cmdOpts) {
  */
 var runnerToResults = function* (runnerCh, resultsCh) {
   let pluginRunner;
-  while(pluginRunner = yield csp.take(runnerCh)) {
+  while((pluginRunner = yield csp.take(runnerCh))) {
     pluginRunner.process.apply(null, pluginRunner.arg).then(function(results) {
       csp.putAsync(resultsCh, results);
     });
@@ -139,7 +129,7 @@ var render = function* (resultsCh) {
     break;
   }
   let jsonData;
-  while(jsonData = yield csp.take(resultsCh)){
+  while((jsonData = yield csp.take(resultsCh))){
     reporter(jsonData);
     // render gutter
     if (process.env.TM_MATE) {
