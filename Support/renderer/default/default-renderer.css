@@ -1,10 +1,15 @@
 /*** Global ***/
-html, body {
+html,
+body {
+  height: 100%;
   margin: 0;
   padding: 0;
-  height: 100%;
-  overflow: hidden;
 }
+
+html{
+  margin-top: 55px;
+}
+
 body {
   background-color: #eaeaea;
   font-family: "Lucida Grande", "Helvetica Neue", Helvetica, sans-serif;
@@ -25,14 +30,14 @@ header {
   color: #fff;
   padding: 0.25em 0.75em 0em;
   background-color: #888;
-  border-bottom: 1px solid #666;
-  text-shadow: 0 -1px 1px #000;
   white-space: nowrap;
 }
+
 header a {
   color: #fff;
   text-decoration: none;
 }
+
 header a.info {
   position: absolute;
   right: 30px;
@@ -45,14 +50,17 @@ header a.info {
   text-indent: -999em;
   transition: background-color 0.1s linear, opacity 0.25s linear;
 }
+
 header .summary,
 header .additional {
   position: relative;
 }
+
 header .additional {
   margin-top: 5px;
   font-size: 0.8em;
 }
+
 header .additional a {
   color: rgb(255, 228, 152);
   text-shadow: none;
@@ -63,81 +71,100 @@ header .additional a {
 
 /*** Body ***/
 .problems {
-  margin: 65px 10px 10px 10px;
-  padding: 0;
   list-style: none;
+  padding: 0;
 }
+
 .problems li {
-  margin: 10px;
+  padding: 5px;
 }
+
 .problems li.file {
-  margin: 0;
-  padding: 0.75em;
   border: 0;
   box-shadow: inset 0 5px 75px rgba(0, 0, 0, 0.75);
   color: #fff;
   text-shadow: 0 2px 5px #000;
 }
-.problems li:first-child a {
+
+.problems li:first-child .problem {
   border-top: 0; /* Original bright border clashes with header shadow. */
 }
-.problems a {
+
+.problems li:nth-child(odd) {
+  background-color: #E0E0E0;
+}
+
+
+.problems .problem {
+  padding: 3px;
   display: block;
-  border-bottom: 1px solid #ccc;
   color: #555;
   cursor: default;
-  padding: 0.5em;
   text-decoration: none;
 }
+
 .problems .location {
   float: right;
   color: #b5372d;
+  margin-right: 10px;
   font-size: 0.9em;
   text-transform: lowercase;
   white-space: nowrap;
-  padding-left: 5px;
 }
+
 .problems .desc {
   display: block;
-  padding: 0 4px;
+  padding: 0;
   font-weight: bold;
   color: #555;
 }
+
+.problems p {
+  margin-top: .8rem;
+}
+
 .problems pre {
   white-space: normal;
-  line-height: 1.6em;
+  line-height: 1.2em;
+  margin-top:.8em;
+  margin-bottom:.8em;
 }
+
 .problems code {
   display: block;
   margin-top: 10px;
   padding: 2px 4px;
   overflow: hidden;
   text-overflow: ellipsis;
-  background-color: #eaeaea;
-  border: 1px solid rgba(0, 0, 0, 0.05);
-  border-radius: 4px;
-  box-shadow: 0 1px 0 rgba(255, 255, 255, 0.25);
   font-family: "Source Code Pro", Monaco, monospace;
   font-size: 1.1em;
-  transition: background-color 0.15s linear;
+  transition: background-color 0.1s linear;
 }
-.problems a:hover code,
-.problems a:focus code {
+
+.problems .problem:hover,
+.problems .problem:focus {
   background-color: #e6e6e6;
 }
-.problems a:active code {
+
+.problems .problem:active {
   background-color: #c0c0c0;
   transition: none;
 }
-.problems .type {
-  margin-right: 5px;
-  float: left;
+
+.type-jscs strong {
+  color: #008000;
 }
-.problems .type-jscs .type strong {
-  color: orange;
+.type-jshint strong {
+  color: #0080FF;
 }
-.problems .type-jshint .type strong {
-  color: red;
+.type-gjslint strong {
+  color: #66F;
+}
+.type-eslint strong {
+  color: #8000FF;
+}
+.type-scss strong {
+  color: #800000;
 }
 
 /*** Success check ***/
