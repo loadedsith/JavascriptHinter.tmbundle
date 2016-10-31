@@ -25,8 +25,12 @@ module.exports = {
    */
   process: function(files, options) {
     let def = Q.defer();
-    let fileDir = path.dirname(files[0]);
-    let args = ['--format', 'JSON'];
+    let cwd = path.dirname(files[0]);
+    let args = ['--format', 'JSON']
+
+    if (process.env.TM_PROJECT_DIRECTORY) {
+      cwd = process.env.TM_PROJECT_DIRECTORY;
+    }
 
     if (options.args) {
       options.args.forEach(function(arg) {
@@ -35,7 +39,8 @@ module.exports = {
     }
 
     args = args.concat(files);
-    let originalOutput = getJsonOutput('eslint', args, {cwd: fileDir});
+
+    let originalOutput = getJsonOutput('eslint', args, {cwd: cwd});
 
     /**
      * Original JSON output needs to be transformed so it can be used with the

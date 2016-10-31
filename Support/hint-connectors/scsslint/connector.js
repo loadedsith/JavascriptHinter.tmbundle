@@ -8,6 +8,7 @@ const path = require('path');
 const getJsonOutput = require('../helpers/getjsonoutput');
 const Q = require('q');
 
+
 /**
  * JavaScriptHinter for TextMate plugin for scss-lint.
  * @type {tmJavaScriptHinter.plugin}
@@ -23,7 +24,7 @@ module.exports = {
    * parsed to a JS object.
    */
   process: function(files, options) {
-    const def = Q.defer();
+    let def = Q.defer();
     let cwd = path.dirname(files[0]);
     let args = ['--format', 'JSON'];
 
@@ -38,9 +39,7 @@ module.exports = {
     }
 
     args = args.concat(files);
-    let originalOutput = getJsonOutput('scss-lint', args, {
-      cwd: cwd,
-    });
+    let originalOutput = getJsonOutput('scss-lint', args, {cwd: cwd});
 
     /**
      * Original JSON output needs to be transformed so it can be used with the
@@ -48,22 +47,32 @@ module.exports = {
      */
     originalOutput
       .then(function(output) {
-        let errors = output[files[0]] || [];
+        let errors = [];
 
-        errors.map(
-          function(error) {
-            return {
-              column: error.column,
-              evidence: error.evidence || '',
-              file: files[0],
-              hinttype: 'scss',
-              line: error.line,
-              message: error.reason +
-                  (error.linter ? ' (' + error.linter + ')' : ''),
-              rule: error.code,
-            };
+        let fileErrors = output.map(function(file) {
+
+          console.log('file', file);
+          return file.messages.map(function(error) {
+              return {
+                column: error.column,
+                evidence: 'goo' + error.evidence || 'foo',
+                file: files[0],
+                hinttype: 'scss',
+                line: 'goos'+error.line,
+                message: error.reason +
+                    (error.linter ? ' (' + error.linter + ')' : ''),
+                rule: error.code,
+              };
+            })
+          });
+
+
+        for (let fileError of fileErrors) {
+          for (let error of fileError) {
+            errors.push(error);
           }
-        );
+        }
+
         def.resolve(errors);
       }, def.reject)
       .done();
