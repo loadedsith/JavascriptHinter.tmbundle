@@ -31,9 +31,6 @@
 
     {{#if numErrors}}
       <ul class="problems">
-        {{#if path}}
-          {{path}}
-        {{/if}}
         {{#each errors}}
           <li class="type-{{hinttype}}">
             <a class="problem" href="txmt://open?url=file://{{file}}&line={{line}}&column={{column}}">

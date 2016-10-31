@@ -1,25 +1,28 @@
+/* eslint no-console: 0 */
+
 /**
  * This runner executes a linter process and collects the output from stdout.
  * The expected output from the linter is JSON that can be parsed by the
  * renderer.
  */
-var Q = require('q'),
-  cp = require('child_process');
+const Q = require('q');
+const cp = require('child_process');
 
 
 /**
  * Get the json output from the linter.
  *
- * @param {String} runnable - Name of the executable to run
+ * @param {string} runnable - Name of the executable to run
  * @param {Array} args - Command line arguments to pass
  * @param {Object} options - Options to set on process.spawn
  * @return {Q.Promise} Returns a promise that is resolved when executable
  *   finishes running
  */
-module.exports = function (runnable, args, options) {
-  var def = Q.defer();
-  var error = '';
-  var proc = cp.spawn(runnable, args, options || {});
+module.exports = function(runnable, args, options) {
+  const def = Q.defer();
+  let error = '';
+  const proc = cp.spawn(runnable, args, options || {});
+
   proc.on('error', function(e) {
     console.log('<br>error executing linter. Is ' + runnable + 'installed?');
     console.log('<br>Linter: ', runnable);
@@ -29,42 +32,44 @@ module.exports = function (runnable, args, options) {
     def.resolve([]);
   });
 
-  proc.stdout.on('data', function (data) {
+  proc.stdout.on('data', function(data) {
     error = error + data;
   });
 
-  proc.on('close', function () {
-    var errors = [];
-    var fileRegex = new RegExp(/.*?(\/.*)\ -{5}/);
-    var errorRegex = new RegExp(/^Line (\d+), E:([^:]+): (.+)$/gm);
+  proc.on('close', function() {
+    const fileRegex = new RegExp(/.*?(\/.*)\ -{5}/);
+    const errorRegex = new RegExp(/^Line (\d+), E:([^:]+): (.+)$/gm);
+    const lines = error.match(/^.*((\r\n|\n|\r)|$)/gm);
 
-    var lines = error.match(/^.*((\r\n|\n|\r)|$)/gm);
-    var errorObject = {};
-    var lastError = {message: ''};
-    var match = true;//init true to ignore the file line
-    var file;
+    let errorObject = {};
+    let errors = [];
+    let file;
+    let lastError = {message: ''};
+    // Init true to ignore the file line.
+    let match = true;
 
     try {
       if (!file) {
         file = fileRegex.exec(lines[0])[1];
       }
     } catch (e) {
-
+      throw new Error(e);
     }
 
-    for (var line of lines) {
-      var lineMatches;
-      // we want to keep building the error object until another lineMatch.
-      while (lineMatches = errorRegex.exec(line)) {
+    for (let line of lines) {
+      let lineMatches;
+
+      while ((lineMatches = errorRegex.exec(line))) {
+        // We want to keep building the error object until another lineMatch.
         errorObject = {
+          column: null,
+          error: 'E:' + lineMatches[2],
+          evidence: '',
           file: file,
           hinttype: 'gjslint',
-          column: null,
-          evidence: '',
           line: parseInt(lineMatches[1]),
           message: lineMatches[3],
-          error: 'E:' + lineMatches[2],
-          ready: false
+          ready: false,
         };
         errors.push(errorObject);
         lastError = errorObject;
@@ -75,7 +80,6 @@ module.exports = function (runnable, args, options) {
       }
       match = false;
     }
-
 
     def.resolve(errors);
   });

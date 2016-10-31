@@ -3,20 +3,21 @@
  * @param {Errors[]} errorsCollection
  */
 module.exports = {
-  reporter: function (errorCollection) {
-    var report = errorCollection.map(function (errors) {
-      var error = errors.error;
+  reporter: function(errorCollection) {
+    let report = errorCollection.map(function(errors) {
+      let error = errors.error;
+
       return {
-        hinttype: 'jshint',
-        file: errors.file,
-        line: error.line,
         column: error.character,
         evidence: error.evidence || '',
+        file: errors.file,
+        hinttype: 'jshint',
+        line: error.line,
         message: error.reason,
-        rule: error.code
+        rule: error.code,
       };
     });
 
     process.stdout.write(JSON.stringify(report) + '\n');
-  }
+  },
 };

@@ -5,19 +5,27 @@
   const fs = require('fs');
   const Handlebars = require('handlebars');
 
+  /**
+   * Renders errors for tooltip.
+   * @param {Array<Object>} errors Lint errors.
+   * @param {Object} config Render config.
+   */
   function render(errors, config) {
     // Create a empty default config object if none was supplied.
     // TODO: the second should be replaced with a defaults config object.
     config = config || {
-      maxToolTipResults: 10
+      maxToolTipResults: 10,
     };
-    var rendererDir = require('path').dirname(__filename);
-    var content = fs.readFileSync(rendererDir + '/tooltip-renderer.html', 'utf8');
-    var template = Handlebars.compile(content);
+
+    const rendererDir = require('path').dirname(__filename);
+    const content = fs.readFileSync(rendererDir +
+        '/tooltip-renderer.html', 'utf8');
+    const template = Handlebars.compile(content);
 
     let result = {
       path: __filename,
     };
+
     if (errors.length) {
       result.hinttype = errors[0].hinttype;
       result.numErrors = errors.length;
@@ -32,7 +40,7 @@
     process.stdout.write(template(result));
   }
 
-  module.exports = function (errors) {
+  module.exports = function(errors) {
     render(errors);
   };
 }());

@@ -1,26 +1,29 @@
-var getopt = require('node-getopt');
-var path = require('path');
-var fileList = require('./fileList');
-var pluginsLoader = require('./plugins-loader');
-var csp = require('js-csp');
-var cmdOpts = {};
-var getCmdOpts;
-var render;
+/* eslint no-console: 0 */
+/* eslint global-require: 0 */
+
+const getopt = require('node-getopt');
+const path = require('path');
+const fileList = require('./fileList');
+const pluginsLoader = require('./plugins-loader');
+const csp = require('js-csp');
+let cmdOpts = {};
 
 /**
-  * Get configuration file, in this order:
+  * Gets configuration file, in the following order.
   *   - From the command line flag '-c'
   *   - From the project directory's .tm_jshinter.js file.
   *   - From the current file's directory's .tm_jshinter.js file
   *   - From the plugin (default options).
-  * @return {Object}
+  * @return {Object} Options.
   */
-var getOptions = function () {
-  var options,
-    optionsPath = cmdOpts.options['options-path'],
-    projectOptionsPath = process.env.TM_PROJECT_DIRECTORY + '/.tm_jshinter.js',
-    directoryOptionsPath = process.env.TM_DIRECTORY + '/.tm_jshinter.js',
-    pluginOptionsPath = __dirname + '/../.tm_jshinter.js';
+const getOptions = function() {
+  const directoryOptionsPath = process.env.TM_DIRECTORY + '/.tm_jshinter.js';
+  const optionsPath = cmdOpts.options['options-path'];
+  const pluginOptionsPath = __dirname + '/../.tm_jshinter.js';
+  const projectOptionsPath = process.env.TM_PROJECT_DIRECTORY +
+      '/.tm_jshinter.js';
+
+  let options;
 
   try {
     options = require(optionsPath);
@@ -61,12 +64,16 @@ var getOptions = function () {
 
 
 /**
- * Connect Plugins to JSON output handling.
- * @param {csp.chan} pluginCh
- * @param {csp.chan} runnerCh
- * @param {Array<string>} files
+ * Runs plugins to the files.
+ * @param {csp.chan} pluginCh For putting plugin runners onto.
+ * @param {csp.chan} runnerCh For pulling plugins off of.
+ * @param {Array<string>} files To be linted.
+ * @param {Object} options Various user configurations, including cwd.
+ * @param {Object} cmdOpts Command line options, typically coming from plugin
+ *     commands.
  */
-var pluginsToRunner = function* (pluginCh, runnerCh, files, options, cmdOpts) {
+const pluginsToRunner = function* (
+    pluginCh, runnerCh, files, options, cmdOpts) {
   if (files.length === 0) {
     files = fileList(cmdOpts.options.directory, options.ignored);
     if (!files) {
@@ -79,17 +86,18 @@ var pluginsToRunner = function* (pluginCh, runnerCh, files, options, cmdOpts) {
   }
 
   let plugin;
-  while((plugin = yield csp.take(pluginCh))) {
+
+  while ((plugin = yield csp.take(pluginCh))) {
     if (plugin === csp.CLOSED) {
       break;
     }
 
     for (let file of files) {
       for (let extension of plugin.extensions) {
-        if(path.extname(file).toLowerCase() === extension.toLowerCase()){
+        if (path.extname(file).toLowerCase() === extension.toLowerCase()) {
           csp.putAsync(runnerCh, {
+            arg: [[options.cwd + file], (options[plugin.name] || {})],
             process: plugin.process,
-            arg: [[options.cwd + file], (options[plugin.name] || {}) ]
           });
         }
       }
@@ -99,52 +107,56 @@ var pluginsToRunner = function* (pluginCh, runnerCh, files, options, cmdOpts) {
 
 
 /**
- * Merge data coming back from hint runner promises
- * @param {js-csp.chan} runnerCh
- * @param {js-csp.chan} resultsCh
+ * Merge data coming back from hint runner promises.
+ * @param {js-csp.chan} runnerCh Takes pluggin runners.
+ * @param {js-csp.chan} resultsCh And puts results.
  */
-var runnerToResults = function* (runnerCh, resultsCh) {
+const runnerToResults = function* (runnerCh, resultsCh) {
   let pluginRunner;
-  while((pluginRunner = yield csp.take(runnerCh))) {
+
+  while ((pluginRunner = yield csp.take(runnerCh))) {
     yield csp.put(resultsCh,
         pluginRunner.process.apply(null, pluginRunner.arg));
   }
 };
 
+
 /**
- * Render data with the requested renderer
- * @param {js-csp} resultsCh
+ * Renders data with the requested renderer.
+ * @param {js-csp.Chan} resultsCh Taking from to render.
  * @param {Object} jsonData JSON array of errors to be renedered.
  */
-var render = function* (resultsCh) {
-  var reporter;
-  var gutterReporter;
-  switch (cmdOpts.options.renderer) {
-  case 'tooltip':
-    reporter = require('./renderer/tooltip/renderer');
-    break;
-  default:
-    reporter = require('./renderer/default/renderer');
-    break;
-  }
-  let jsonData;
+const render = function* (resultsCh) {
+  let reporter;
+  let gutterReporter;
 
-  while((result = yield csp.take(resultsCh))){
-    result.then((jsonData)=> {
+  switch (cmdOpts.options.renderer) {
+    case 'tooltip':
+      reporter = require('./renderer/tooltip/renderer');
+      break;
+    default:
+      reporter = require('./renderer/default/renderer');
+      break;
+  }
+
+  let result;
+
+  while ((result = yield csp.take(resultsCh))) {
+    result.then((jsonData) => {
       reporter(jsonData);
       if (process.env.TM_MATE) {
         gutterReporter = require('./renderer/gutter/renderer');
         gutterReporter(jsonData);
       }
-    })
+    });
   }
 };
 
 /**
- * Get command line params
+ * Gets command line params.
  * @return {Object} Command line arguments as configuration object.
  */
-var getCmdOpts = function () {
+const getCmdOpts = function() {
   return getopt.create([
     ['r', 'renderer=ARG', 'renderer to use: default or tooltip'],
     ['d', 'disable-plugins=', 'plugins to disable'],
@@ -152,27 +164,27 @@ var getCmdOpts = function () {
     ['p', 'plugin-path=', 'plugin path override', './hint-connectors/'],
     ['z', 'directory=', 'directory to lint'],
     ['h', 'help', 'display this help'],
-    ['v', 'version', 'show version']
+    ['v', 'version', 'show version'],
   ])
   .bindHelp()
   .parseSystem();
 };
 
 cmdOpts = getCmdOpts();
-var options = getOptions();
+let options = getOptions();
 
 options.cwd = '';
 if (cmdOpts.options.directory) {
   options.cwd = cmdOpts.options.directory + '/';
 }
 
-var runnerCh = csp.chan();
-var pluginCh = csp.chan();
-var resultsCh = csp.chan();
-var files = cmdOpts.argv;
+let runnerCh = csp.chan();
+let pluginCh = csp.chan();
+let resultsCh = csp.chan();
+let files = cmdOpts.argv;
 
 csp.go(pluginsLoader.getPlugins,
-  [ pluginCh, cmdOpts.options['plugin-path'], options.disabledPlugins ]
+  [pluginCh, cmdOpts.options['plugin-path'], options.disabledPlugins]
 );
 csp.go(pluginsToRunner, [pluginCh, runnerCh, files, options, cmdOpts]);
 csp.go(runnerToResults, [runnerCh, resultsCh]);
