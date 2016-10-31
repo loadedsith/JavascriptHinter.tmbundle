@@ -15,7 +15,7 @@ module.exports = function render(errors) {
   };
 
   if (errors.length) {
-    result.project = proces.env.TM_PROJECT_DIRECTORY;
+    result.project = process.env.TM_PROJECT_DIRECTORY;
     result.hinttype = errors[0].hinttype;
     result.path = __filename;
     result.numErrors = errors.length;
@@ -25,7 +25,7 @@ module.exports = function render(errors) {
 
   if (process.env.TM_PROJECT_DIRECTORY) {
     result.project = process.env.TM_PROJECT_DIRECTORY;
-          result.path = result.path.replace(process.env.TM_PROJECT_DIRECTORY, '');
+    result.path = result.path.replace(process.env.TM_PROJECT_DIRECTORY, '');
   }
 
   process.stdout.write(template(result));
