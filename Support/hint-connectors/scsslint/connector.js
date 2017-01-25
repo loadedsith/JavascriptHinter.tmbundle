@@ -49,29 +49,23 @@ module.exports = {
       .then(function(output) {
         let errors = [];
 
-        let fileErrors = output.map(function(file) {
-
-          console.log('file', file);
-          return file.messages.map(function(error) {
+        for ( let fileName in output ) {
+          let fileErrors = output[fileName].map((error) => {
+            console.log('error', error);
               return {
-                column: error.column,
-                evidence: 'goo' + error.evidence || 'foo',
-                file: files[0],
-                hinttype: 'scss',
-                line: 'goos'+error.line,
-                message: error.reason +
-                    (error.linter ? ' (' + error.linter + ')' : ''),
-                rule: error.code,
-              };
-            })
+                  column: error.column,
+                  // evidence: error.evidence || 'no evidence',
+                  file: files[0],
+                  hinttype: 'scss',
+                  line: error.line,
+                  message: error.reason +
+                      (error.linter ? ' (' + error.linter + ')' : ''),
+                      rule: error.code,
+                  };
           });
-
-
-        for (let fileError of fileErrors) {
-          for (let error of fileError) {
-            errors.push(error);
-          }
+          errors = errors.concat(fileErrors)
         }
+
 
         def.resolve(errors);
       }, def.reject)
