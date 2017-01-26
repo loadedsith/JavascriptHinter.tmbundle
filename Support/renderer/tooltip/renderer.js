@@ -2,11 +2,12 @@
 (function() {
   'use strict';
   const TEMPLATE =
-`{{#if numErrors}}{{hinttype}} found {{numErrors}} problems:
-
-{{#each errors}}[{{hinttype}}] Line {{line}}: {{{message}}}
+`{{#if numErrors}}<p><b>{{hinttype}}</b> found {{numErrors}} problems:</p>
+<p>
+{{#each errors}}[<b>{{hinttype}}</b>] Line {{line}}: {{{message}}}<br/>
 {{/each}}
 {{else}}Lint-free!{{/if}}
+</p>
 `
   const Handlebars = require('handlebars');
   const DIALOG = process.env.DIALOG;
@@ -41,32 +42,7 @@
       result.path = result.path.replace(process.env.TM_PROJECT_DIRECTORY, '');
     }
 
-
-    process.stdout.write(template(result));
-    // var ls = cp.spawn(DIALOG, ['filepanel']);
-    // var ls = cp.execFile(DIALOG, ['tooltip']);
-
-      // [
-      // 'help',
-      // 'tooltip' ,
-//       '--text',
-//       'foobar'
-      // 'tooltip --text foobar',
-      // template(result)
-    // ].join(' '));
-  // )
-
-    // ls.stdout.on('data', (data) => {
-   //    process.stdout.write(`stdout: ${data}`);
-   //  });
-   //
-   //  ls.stderr.on('data', (data) => {
-   //    process.stdout.write(`stderr: ${data}`);
-   //  });
-   //
-   //  ls.on('close', (code) => {
-   //    process.stdout.write(`child process exited with code ${code}`);
-   //  });
+    cp.exec('"$DIALOG" tooltip --html \''+template(result)+'\'  &> /dev/null &');
   }
 
   module.exports = function(errors) {
