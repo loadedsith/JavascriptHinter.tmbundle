@@ -51,7 +51,6 @@ module.exports = {
 
         for ( let fileName in output ) {
           let fileErrors = output[fileName].map((error) => {
-            console.log('error', error);
               return {
                   column: error.column,
                   // evidence: error.evidence || 'no evidence',

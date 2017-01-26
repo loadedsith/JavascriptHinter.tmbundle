@@ -1,10 +1,16 @@
 /* jshint node: true */
 (function() {
   'use strict';
+  const TEMPLATE =
+`{{#if numErrors}}{{hinttype}} found {{numErrors}} problems:
 
-  const fs = require('fs');
+{{#each errors}}[{{hinttype}}] Line {{line}}: {{{message}}}
+{{/each}}
+{{else}}Lint-free!{{/if}}
+`
   const Handlebars = require('handlebars');
-
+  const DIALOG = process.env.DIALOG;
+  const cp = require('child_process');
   /**
    * Renders errors for tooltip.
    * @param {Array<Object>} errors Lint errors.
@@ -17,10 +23,8 @@
       maxToolTipResults: 10,
     };
 
-    const rendererDir = require('path').dirname(__filename);
-    const content = fs.readFileSync(rendererDir +
-        '/tooltip-renderer.html', 'utf8');
-    const template = Handlebars.compile(content);
+
+    const template = Handlebars.compile(TEMPLATE);
 
     let result = {
       path: __filename,
@@ -37,7 +41,32 @@
       result.path = result.path.replace(process.env.TM_PROJECT_DIRECTORY, '');
     }
 
+
     process.stdout.write(template(result));
+    // var ls = cp.spawn(DIALOG, ['filepanel']);
+    // var ls = cp.execFile(DIALOG, ['tooltip']);
+
+      // [
+      // 'help',
+      // 'tooltip' ,
+//       '--text',
+//       'foobar'
+      // 'tooltip --text foobar',
+      // template(result)
+    // ].join(' '));
+  // )
+
+    // ls.stdout.on('data', (data) => {
+   //    process.stdout.write(`stdout: ${data}`);
+   //  });
+   //
+   //  ls.stderr.on('data', (data) => {
+   //    process.stdout.write(`stderr: ${data}`);
+   //  });
+   //
+   //  ls.on('close', (code) => {
+   //    process.stdout.write(`child process exited with code ${code}`);
+   //  });
   }
 
   module.exports = function(errors) {

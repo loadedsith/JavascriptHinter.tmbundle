@@ -131,6 +131,9 @@ const render = function* (resultsCh) {
   let gutterReporter;
 
   switch (cmdOpts.options.renderer) {
+    case 'gutter':
+      reporter = require('./renderer/gutter/renderer');
+      break;
     case 'tooltip':
       reporter = require('./renderer/tooltip/renderer');
       break;

@@ -39,7 +39,6 @@ module.exports = {
     }
 
     args = args.concat(files);
-
     let originalOutput = getJsonOutput('eslint', args, {cwd: cwd});
 
     /**
