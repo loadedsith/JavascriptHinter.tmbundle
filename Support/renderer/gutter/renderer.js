@@ -61,9 +61,10 @@ function refreshMarks(errors) {
 function renderDescriptions(errors) {
   errors.forEach(function(err) {
     if (err.file === currentFile) {
+      let msg = `${gutterImage}:"${err.hinttype} ${err.message}"`;
       cp.spawn(MATE, [
         '--set-mark',
-        gutterImage + ':"' + err.message + '"',
+        msg,
         '--line',
         err.line,
         err.file,

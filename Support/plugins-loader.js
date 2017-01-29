@@ -1,10 +1,8 @@
-
 const {put} = require('js-csp');
-
 const fileList = require('./fileList');
 
 /**
- * Load JavascriptHinter plugins
+ * Loads JavascriptHinter plugins.
  */
 module.exports = {
   /**

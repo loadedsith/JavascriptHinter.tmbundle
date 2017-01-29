@@ -2,9 +2,10 @@
 (function() {
   'use strict';
   const TEMPLATE =
-`{{#if numErrors}}<p><b>{{hinttype}}</b> found {{numErrors}} problems:</p>
+`<style>body{background-color: rgba(255,255,255,0.8);}p{ color: #000;};
+</style>{{#if numErrors}}<p><b>{{hinttype}}</b> found {{numErrors}} problems:</p>
 <p>
-{{#each errors}}[<b>{{hinttype}}</b>] Line {{line}}: {{{message}}}<br/>
+{{#each errors}}[<b>{{hinttype}}</b>]⚠️ Line {{line}}: {{{message}}}<br/>
 {{/each}}
 {{else}}Lint-free!{{/if}}
 </p>
@@ -42,7 +43,8 @@
       result.path = result.path.replace(process.env.TM_PROJECT_DIRECTORY, '');
     }
 
-    cp.exec('"$DIALOG" tooltip --html \''+template(result)+'\'  &> /dev/null &');
+    cp.exec(`"$DIALOG" tooltip --transparent --html \
+        '${template(result)}\' &> /dev/null &`);
   }
 
   module.exports = function(errors) {
