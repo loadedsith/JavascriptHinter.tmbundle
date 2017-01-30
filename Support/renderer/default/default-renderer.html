@@ -7,7 +7,7 @@
     <script type="text/javascript">
       var bundleVersion = '{{version}}';
     </script>
-      <script type="text/javascript" src="file://{{assetPath}}/default-renderer.js"></script>
+    <script type="text/javascript" src="file://{{assetPath}}/default-renderer.js"></script>
   </head>
   <body>
     <header>
@@ -25,26 +25,30 @@
         Update available! <a href="https://github.com/bodnaristvan/JavascriptHinter.tmbundle" target="_blank" id="update-link">Update now</a> or <a href="#" id="close-update-reminder">(remind me in 3 days)</a>
       </div>
     </header>
+    {{#each errors}}
+      {{#if this.numErrors}}
+        <p class='type'>!!!!![<b>{{hinttype}}</b>] found {{numErrors}} problems:</p>
+          <ul class="problems">
 
-    {{#if numErrors}}
-      <ul class="problems">
-        {{#each errors}}
-          <li class="type type-{{hinttype}}">
-            <a class="problem" href="txmt://open?url=file://{{file}}&line={{line}}&column={{column}}">
-              {{#if @ first}}
-                <p>
-                  <span class="type">
-                    <strong>{{hinttype}}</strong>: {{file}}
-                  </span>
-                </p>
-              {{/if}}
-              <span class="location">Line {{line}}, column {{column}}</span>
-              <span class="desc">{{message}}</span>
-              <pre><code>{{#if evidence}}{{evidence}}{{else}}click here to see{{/if}}</code></pre>
-            </a>
-          </li>
-        {{/each}}
-      </ul>
-    {{/if}}
+          {{#each this.errors}}
+            <li class="type type-{{hinttype}}">
+              <a class="problem" href="txmt://open?url=file://{{file}}&line={{line}}&column={{column}}">
+                {{#if @ first}}
+                  <p>
+                    <span class="type">
+                      <strong>{{hinttype}}</strong>: {{file}}
+                    </span>
+                  </p>
+                {{/if}}
+
+                <span class="location">Line {{line}}, column {{column}}</span>
+                <span class="desc">{{message}}</span>
+                <pre><code>{{#if evidence}}{{evidence}}{{else}}click here to see{{/if}}</code></pre>
+              </a>
+            </li>
+          {{/each}}
+        </ul>
+      {{/if}}
+    {{/each}}
   </body>
 </html>
