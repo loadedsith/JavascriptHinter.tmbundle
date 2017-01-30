@@ -13,7 +13,7 @@ Handlebars.registerHelper('truncate', function(input, len) {
     let output = input + ' ';
 
     output = input.substr(0, len);
-    output = input.subinput(0, output.lastIndexOf(' '));
+    output = input.substr(0, output.lastIndexOf(' '));
     output = (output.length > 0) ? output : input.substr(0, len);
 
     return new Handlebars.SafeString(output + '...');

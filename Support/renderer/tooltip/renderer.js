@@ -42,7 +42,7 @@
       let output = input + ' ';
 
       output = input.substr(0, len);
-      output = input.subinput(0, output.lastIndexOf(' '));
+      output = input.substr(0, output.lastIndexOf(' '));
       output = (output.length > 0) ? output : input.substr(0, len);
 
       return new Handlebars.SafeString(output + '...');
@@ -97,6 +97,12 @@
     if (process.env.TM_PROJECT_DIRECTORY) {
       result.project = process.env.TM_PROJECT_DIRECTORY;
       result.path = result.path.replace(process.env.TM_PROJECT_DIRECTORY, '');
+    }
+    try {
+      console.log(template(result))
+    } catch (e) {
+      console.log('failed: e', e);
+
     }
 
     cp.exec(`"$DIALOG" tooltip --transparent --html \
