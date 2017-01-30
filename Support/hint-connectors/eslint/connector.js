@@ -26,7 +26,7 @@ module.exports = {
   process: function(files, options) {
     let def = Q.defer();
     let cwd = path.dirname(files[0]);
-    let args = ['--format', 'JSON']
+    let args = ['--format', 'JSON'];
 
     if (process.env.TM_PROJECT_DIRECTORY) {
       cwd = process.env.TM_PROJECT_DIRECTORY;
@@ -68,10 +68,8 @@ module.exports = {
             errors.push(error);
           }
         }
-
         def.resolve(errors);
       }, def.reject)
-      .done();
 
     return def.promise;
   },

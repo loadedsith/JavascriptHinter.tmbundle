@@ -24,11 +24,11 @@ module.exports = function(runnable, args, options) {
   const proc = cp.spawn(runnable, args, options || {});
 
   proc.on('error', function(e) {
-    console.log('<br>error executing linter. Is ' + runnable + 'installed?');
-    console.log('<br>Linter: ', runnable);
-    console.log('<br>args', args);
-    console.log('<br>options', options);
-    console.log('<br>Error', e);
+    console.log(`<br>Error executing linter. Is ${runnable} installed?`);
+    console.log(`<br>Linter: ${runnable}`);
+    console.log(`<br>Args: ${args}`);
+    console.log(`<br>Options: ${options}`);
+    console.log(`<br>Error ${e}`);
     def.resolve([]);
   });
 
@@ -63,7 +63,7 @@ module.exports = function(runnable, args, options) {
         // We want to keep building the error object until another lineMatch.
         errorObject = {
           column: null,
-          error: 'E:' + lineMatches[2],
+          error: `E: ${lineMatches[2]}`,
           evidence: '',
           file: file,
           hinttype: 'gjslint',

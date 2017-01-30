@@ -46,6 +46,7 @@ module.exports = function(runnable, args, options) {
       console.log(`Error running ${runnable}: e: ${e}.`);
       jsonData = [];
     }
+
     def.resolve(jsonData);
   });
 

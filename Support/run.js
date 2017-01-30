@@ -17,6 +17,7 @@ const PROJECT_OPTIONS_PATH =
 let cmdOpts = {};
 
 let gutterReporter = null;
+
 if (process.env.TM_MATE) {
   gutterReporter = require('./renderer/gutter/renderer');
 }
@@ -124,8 +125,9 @@ const runnerToResults = function* (runnerCh, resultsCh) {
   let pluginRunner;
 
   while ((pluginRunner = yield take(runnerCh))) {
-    yield put(resultsCh,
-        pluginRunner.process.apply(null, pluginRunner.arg));
+    let results = pluginRunner.process.apply(null, pluginRunner.arg);
+
+    yield put(resultsCh, results);
   }
 };
 
@@ -137,7 +139,6 @@ const runnerToResults = function* (runnerCh, resultsCh) {
  */
 const render = function* (resultsCh) {
   let reporter;
-  let results = [];
 
   switch (cmdOpts.options.renderer) {
     case 'gutter':
@@ -150,14 +151,30 @@ const render = function* (resultsCh) {
       reporter = require('./renderer/default/renderer');
       break;
   }
-  let result;
+
+  let results = {};
+
+  let result = null;
+
   while ((result = yield take(resultsCh))) {
     result.then((jsonData) => {
-      results.push(...jsonData)
-      reporter(results);
+      if (jsonData && jsonData[0] && jsonData[0].hinttype) {
+        if (!results[jsonData[0].hinttype]) {
+          results[jsonData[0].hinttype] = jsonData;
+        } else {
+          results[jsonData[0].hinttype].push(...jsonData);
+        }
+      } else {
+        if (!results['hinttype unknown']) {
+          results['hinttype unknown'] = jsonData;
+        } else {
+          results['hinttype unknown'].push(...jsonData);
+        }
+      }
 
+      reporter(results);
       if (gutterReporter !== null) {
-        gutterReporter(jsonData);
+        gutterReporter(results);
       }
     });
   }
@@ -180,6 +197,8 @@ const getCmdOpts = function() {
   .bindHelp()
   .parseSystem();
 };
+
+
 
 cmdOpts = getCmdOpts();
 let options = getOptions();
