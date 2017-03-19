@@ -6,7 +6,7 @@ const path = require('path');
 const fileList = require('./fileList');
 const pluginsLoader = require('./plugins-loader');
 const {CLOSED, chan, go, put, putAsync, take} = require('js-csp');
-
+const JSHinterError = require('./JSHinterError');
 const DIRECTORY_OPTIONS_PATH =
     `${process.env.TM_DIRECTORY}/.tm_jshinter.js`;
 const PLUGIN_OPTIONS_PATH =
@@ -59,14 +59,15 @@ const getOptions = function() {
             console.log('using config in PLUGIN_OPTIONS_PATH');
           }
         } catch (e) {
-          throw new Error('Could not load config file.');
+          console.log('throw new JSHinterError(\'Could not load config file.\')');
+          throw new JSHinterError('Could not load config file.');
         }
       }
     }
   }
 
   if (!options) {
-    throw new Error('Configuration file not found, aborting.');
+    throw new JSHinterError('Configuration file not found, aborting.');
   }
 
   return options;

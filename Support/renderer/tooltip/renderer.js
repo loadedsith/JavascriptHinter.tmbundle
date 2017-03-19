@@ -25,28 +25,30 @@
   {{#if numErrors}}
     <p class='type'>[<b>{{hinttype}}</b>] found {{numErrors}} problems:</p>
     {{#each errors}}
-      <p class='error'>⚠️ Line {{line}}: {{{message}}}</p>
-      <code class='evidence'>{{truncate evidence 80}}</code>
+      <p class='error'>Line {{line}}: {{{message}}}</p>
+      {{#if evidence}}
+        <code class='evidence'>{{truncate evidence 80}}</code>
+      {{/if}}
     {{/each}}
   {{/if}}
 {{/each}}
 {{#if numErrors}}<p class='type'>Total problems: {{numErrors}}</p>
 {{else}}Lint-free!{{/if}}
-</p>
 `;
   const cp = require('child_process');
   const Handlebars = require('handlebars');
 
   Handlebars.registerHelper('truncate', function(input, len) {
-    if (input && input.length > len && input.length > 0) {
-      let output = input + ' ';
-
-      output = input.substr(0, len);
-      output = input.substr(0, output.lastIndexOf(' '));
-      output = (output.length > 0) ? output : input.substr(0, len);
-
-      return new Handlebars.SafeString(output + '...');
-    }
+    // TODO Fix this...
+    // if (input && input.length > len && input.length > 0) {
+    //   let output = input + ' ';
+    //
+    //   output = input.substr(0, len);
+    //   output = input.substr(0, output.lastIndexOf(' '));
+    //   output = (output.length > 0) ? output : input.substr(0, len);
+    //
+    //   return new Handlebars.SafeString(output + '...');
+    // }
 
     return input;
   });
@@ -94,10 +96,15 @@
       }
     }
 
+    if (result.numErrors == 0) {
+      return;
+    }
+
     if (process.env.TM_PROJECT_DIRECTORY) {
       result.project = process.env.TM_PROJECT_DIRECTORY;
       result.path = result.path.replace(process.env.TM_PROJECT_DIRECTORY, '');
     }
+
     try {
       console.log(template(result))
     } catch (e) {
@@ -106,7 +113,7 @@
     }
 
     cp.exec(`"$DIALOG" tooltip --transparent --html \
-        '${template(result)}\' &> /dev/null &`);
+        '${template(result)}\' &> /Users/heathg/Desktop/log.out &disown`);
   }
 
   module.exports = function(errors) {

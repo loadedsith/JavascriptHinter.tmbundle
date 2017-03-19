@@ -9,15 +9,15 @@ const template = Handlebars.compile(content);
 const version = require('../../version.json');
 
 Handlebars.registerHelper('truncate', function(input, len) {
-  if (input && input.length > len && input.length > 0) {
-    let output = input + ' ';
-
-    output = input.substr(0, len);
-    output = input.substr(0, output.lastIndexOf(' '));
-    output = (output.length > 0) ? output : input.substr(0, len);
-
-    return new Handlebars.SafeString(output + '...');
-  }
+  // if (input && input.length > len && input.length > 0) {
+  //   let output = input + ' ';
+  //
+  //   output = input.substr(0, len);
+  //   output = input.substr(0, output.lastIndexOf(' '));
+  //   output = (output.length > 0) ? output : input.substr(0, len);
+  //
+  //   return new Handlebars.SafeString(output + '...');
+  // }
 
   return input;
 });
