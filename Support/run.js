@@ -141,16 +141,20 @@ const runnerToResults = function* (runnerCh, resultsCh) {
 const render = function* (resultsCh) {
   let reporter;
 
-  switch (cmdOpts.options.renderer) {
-    case 'gutter':
-      reporter = require('./renderer/gutter/renderer');
-      break;
-    case 'tooltip':
-      reporter = require('./renderer/tooltip/renderer');
-      break;
-    default:
-      reporter = require('./renderer/default/renderer');
-      break;
+  try {
+    switch (cmdOpts.options.renderer) {
+      case 'gutter':
+        reporter = require('./renderer/gutter/renderer');
+        break;
+      case 'tooltip':
+        reporter = require('./renderer/tooltip/renderer');
+        break;
+      default:
+        reporter = require('./renderer/default/renderer');
+        break;
+    }
+  } catch (e) {
+    throw Error('Render failed to load' + e)
   }
 
   let results = {};
@@ -214,9 +218,24 @@ let pluginCh = chan();
 let resultsCh = chan();
 let files = cmdOpts.argv;
 
-go(pluginsLoader.getPlugins,
-  [pluginCh, cmdOpts.options['plugin-path'], options.disabledPlugins]
-);
-go(pluginsToRunner, [pluginCh, runnerCh, files, options, cmdOpts]);
-go(runnerToResults, [runnerCh, resultsCh]);
-go(render, [resultsCh]);
+try {
+  go(pluginsLoader.getPlugins,
+    [pluginCh, cmdOpts.options['plugin-path'], options.disabledPlugins]
+  );
+  go(pluginsToRunner, [pluginCh, runnerCh, files, options, cmdOpts]);
+  go(runnerToResults, [runnerCh, resultsCh]);
+  go(render, [resultsCh]);
+
+} catch (e) {
+  const tooltip = require('./renderer/tooltip/renderer');
+  let str = e.stack;
+
+  tooltip({
+    'JavascriptHinterError':
+       [
+         {
+           message:`Error executing<br>Error: ${e}<br><br>${e.stack.replace('\n','<br><br>')}`
+         }
+      ],
+  });
+}

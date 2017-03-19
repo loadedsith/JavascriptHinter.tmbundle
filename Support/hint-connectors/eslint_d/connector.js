@@ -69,7 +69,7 @@ module.exports = {
           }
         }
         def.resolve(errors);
-      }, def.reject)
+      }, def.reject);
 
     return def.promise;
   },

@@ -35,7 +35,7 @@
 {{#if numErrors}}<p class='type'>Total problems: {{numErrors}}</p>
 {{else}}Lint-free!{{/if}}
 `;
-  const cp = require('child_process');
+  const cp = require('child_process')
   const Handlebars = require('handlebars');
 
   Handlebars.registerHelper('truncate', function(input, len) {
@@ -109,7 +109,6 @@
       console.log(template(result))
     } catch (e) {
       console.log('failed: e', e);
-
     }
 
     cp.exec(`"$DIALOG" tooltip --transparent --html \

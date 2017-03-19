@@ -22,29 +22,43 @@ module.exports = function(runnable, args, options) {
 
   const proc = cp.spawn(runnable, args, options || {});
 
-  proc.on('error', function(e) {
-    console.log(`error executing linter. Is ${runnable} installed?`);
-    console.log(`Linter: ${runnable}`);
-    console.log(`args, ${args}`);
-    console.log(`options ${options}`);
-    console.log('Error', e);
-
-    def.resolve([]);
+  proc.on('error', (e) => {
+    def.resolve([{
+      messages: [{
+        message: `Error executing linter. Is ${runnable} installed?<br>
+          <br>
+          Linter: ${runnable}<br>
+          <br>
+          args: ${args}<br>
+          <br>
+          options: ${JSON.stringify(options)}<br>
+          <br>
+          ${dataConcat}.<br>
+          <br>
+          Error: ${e}`.replace('\n', '<br>'),
+      }],
+    }]);
   });
 
-  proc.stdout.on('data', function(data) {
+  proc.stdout.on('data', (data) => {
     dataConcat = dataConcat + data;
   });
 
-  proc.on('close', function() {
-    let jsonData;
+  proc.on('close', () => {
+    let jsonData = {};
 
     try {
       jsonData = JSON.parse(dataConcat);
     } catch (e) {
-      console.log(`Error running ${runnable}: dataConcat: ${dataConcat}.`);
-      console.log(`Error running ${runnable}: e: ${e}.`);
-      jsonData = [];
+      jsonData = [{
+        messages: [{
+          message: `Error running ${runnable}:<br>
+             <br>
+             ${dataConcat}.<br>
+             <br>
+             ${e}`.replace('\n', '<br>'),
+        }],
+      }];
     }
 
     def.resolve(jsonData);
