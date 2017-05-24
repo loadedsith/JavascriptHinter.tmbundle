@@ -170,6 +170,7 @@ const render = function* (resultsCh) {
           results[jsonData[0].hinttype].push(...jsonData);
         }
       } else {
+
         if (!results['hinttype unknown']) {
           results['hinttype unknown'] = jsonData;
         } else {

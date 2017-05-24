@@ -24,6 +24,7 @@ Handlebars.registerHelper('truncate', function(input, len) {
 
 module.exports = function render(errorsByHinter) {
   let result = {
+    supportPath: process.env['TM_BUNDLE_SUPPORT'],
     assetPath: rendererDir,
     errors: {},
     numErrors: 0,

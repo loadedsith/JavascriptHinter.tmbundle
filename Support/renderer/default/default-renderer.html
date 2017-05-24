@@ -6,12 +6,16 @@
     <link rel="stylesheet" href="file://{{assetPath}}/default-renderer.css" />
     <script type="text/javascript">
       var bundleVersion = '{{version}}';
+      var closeScript = function() {
+        TextMate.system('osascript "{{supportPath}}/close-html-output.applescript"', null);
+      };
     </script>
     <script type="text/javascript" src="file://{{assetPath}}/default-renderer.js"></script>
   </head>
   <body>
     <header>
       <div class="summary">
+        <a class="close" onclick="closeScript()">x</a>
         <a class="problem" href="txmt://open?url=file://{{config.targetFile}}" title="Open target file">
           {{#if numErrors}}
             JavascriptHinter found {{numErrors}} problems
@@ -27,7 +31,6 @@
     </header>
     {{#each errors}}
       {{#if this.numErrors}}
-        <p class='type'>!!!!![<b>{{hinttype}}</b>] found {{numErrors}} problems:</p>
           <ul class="problems">
 
           {{#each this.errors}}
@@ -40,9 +43,7 @@
                     </span>
                   </p>
                 {{/if}}
-
-                <span class="location">Line {{line}}, column {{column}}</span>
-                <span class="desc">{{message}}</span>
+                <span class="location">{{line}}:{{column}}</span><span class="desc">{{message}}</span>
                 <pre><code>{{#if evidence}}{{evidence}}{{else}}click here to see{{/if}}</code></pre>
               </a>
             </li>
