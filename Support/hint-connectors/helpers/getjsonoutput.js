@@ -24,7 +24,6 @@ module.exports = function(runnable, args, options) {
 
   proc.on('error', (e) => {
     def.resolve([{
-      messages: [{
         message: `Error executing linter. Is ${runnable} installed?<br>
           <br>
           Linter: ${runnable}<br>
@@ -36,7 +35,6 @@ module.exports = function(runnable, args, options) {
           ${dataConcat}.<br>
           <br>
           Error: ${e}`.replace('\n', '<br>'),
-      }],
     }]);
   });
 
