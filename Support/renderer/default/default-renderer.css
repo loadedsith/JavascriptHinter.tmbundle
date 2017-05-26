@@ -33,14 +33,17 @@ header {
   white-space: nowrap;
 }
 
+header a.problem {
+  margin-left: 30px;
+}
 header a {
   color: #fff;
   text-decoration: none;
 }
 
-header a.info {
+header .info {
   position: absolute;
-  right: 30px;
+  right: 60px;
   top: 3px;
   display: block;
   width: 13px;
@@ -49,6 +52,27 @@ header a.info {
   border-radius: 7px;
   text-indent: -999em;
   transition: background-color 0.1s linear, opacity 0.25s linear;
+}
+
+header .close:hover {
+  color: black;
+  opacity: 1;
+}
+
+header .close {
+  background: red;
+  border-radius: 20px;
+  color: red;
+  cursor: pointer;
+  display: block;
+  height: 23px;
+  left: 3px;
+  position: fixed;
+  text-align: center;
+  top: 3px;
+  opacity: 0.7;
+  width: 23px;
+  transition: opacity 0.25s linear;
 }
 
 header .summary,
@@ -104,18 +128,8 @@ header .additional a {
 }
 
 .problems .problem pre {
-  max-height: 0;
-  height: 100px;
-  transition: 0.1s 0.1s max-height, 0.1s 0.1s margin;
-  margin-top: 0;
-  margin-bottom: 0;
-  overflow: hidden;
-}
-
-.problems .problem:hover pre {
-  max-height: 3rem;
-  margin-top: 4px;
-  margin-bottom: 4px;
+  margin-top: 6px;
+  margin-bottom: 6px;
 }
 
 .problems .location {

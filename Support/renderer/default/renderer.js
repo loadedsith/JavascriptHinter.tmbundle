@@ -24,6 +24,7 @@ Handlebars.registerHelper('truncate', function(input, len) {
 
 module.exports = function render(errorsByHinter) {
   let result = {
+    projectPath: process.env['TM_PROJECT_DIRECTORY'],
     supportPath: process.env['TM_BUNDLE_SUPPORT'],
     assetPath: rendererDir,
     errors: {},
@@ -41,6 +42,7 @@ module.exports = function render(errorsByHinter) {
         }
         result.hinttype = errors[0].hinttype;
         result.path = __filename;
+        result.nicePath = __filename.replace(process.env['TM_PROJECT_DIRECTORY'],'') + '1';
         result.errors[hinttype].numErrors = errors.length;
         result.errors[hinttype].errors = errors;
         result.numErrors += errors.length;

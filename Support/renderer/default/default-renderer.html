@@ -9,40 +9,61 @@
       var closeScript = function() {
         TextMate.system('osascript "{{supportPath}}/close-html-output.applescript"', null);
       };
+      document.onkeydown = function(evt) {
+          evt = evt || window.event;
+          var isEscape = false;
+          if ("key" in evt) {
+              isEscape = (evt.key == "Escape" || evt.key == "Esc");
+          } else {
+              isEscape = (evt.keyCode == 27);
+          }
+          if (isEscape) {
+            closeScript()
+          }
+      };
+
     </script>
     <script type="text/javascript" src="file://{{assetPath}}/default-renderer.js"></script>
   </head>
   <body>
     <header>
       <div class="summary">
-        <a class="close" onclick="closeScript()">x</a>
         <a class="problem" href="txmt://open?url=file://{{config.targetFile}}" title="Open target file">
           {{#if numErrors}}
-            JavascriptHinter found {{numErrors}} problems
+            {{numErrors}} problems {{nicePath}}
           {{else}}
             Lint-free!
           {{/if}}
         </a>
-        <a href="https://github.com/bodnaristvan/JavascriptHinter.tmbundle" target="_blank" class="info" title="About JavascriptHinter.tmbundle">info</a>
+        <a href="https://github.com/loadedsith/JavascriptHinter.tmbundle" target="_blank" class="info" title="About JavascriptHinter.tmbundle">info</a>
+        <a class="close" onclick="closeScript()">x</a>
       </div>
       <div class="additional" id="update-message" style="display: none;">
-        Update available! <a href="https://github.com/bodnaristvan/JavascriptHinter.tmbundle" target="_blank" id="update-link">Update now</a> or <a href="#" id="close-update-reminder">(remind me in 3 days)</a>
+        Update available! <a href="https://github.com/loadedsith/JavascriptHinter.tmbundle" target="_blank" id="update-link">Update now</a> or <a href="#" id="close-update-reminder">(remind me in 3 days)</a>
       </div>
     </header>
     {{#each errors}}
       {{#if this.numErrors}}
+
           <ul class="problems">
 
           {{#each this.errors}}
-            <li class="type type-{{hinttype}}">
-              <a class="problem" href="txmt://open?url=file://{{file}}&line={{line}}&column={{column}}">
-                {{#if @ first}}
-                  <p>
+            {{#if @ first}}
+              <li>
+                <p>
+
                     <span class="type">
-                      <strong>{{hinttype}}</strong>: {{file}}
+                      <strong>{{hinttype}}</strong> for
                     </span>
-                  </p>
-                {{/if}}
+                    <a href="txmt://open?url=file://{{file}}&line={{line}}&column={{column}}">
+                      ./{{../../nicePath}}
+                    </a>
+                </p>
+              </li>
+            {{/if}}
+
+            <li class="type type-{{hinttype}}">
+              <a class="problem" href="txmt://open?url=file://{{file}}&line={{line}}&column={{column}}" title="{{file}}">
                 <span class="location">{{line}}:{{column}}</span><span class="desc">{{message}}</span>
                 <pre><code>{{#if evidence}}{{evidence}}{{else}}click here to see{{/if}}</code></pre>
               </a>
