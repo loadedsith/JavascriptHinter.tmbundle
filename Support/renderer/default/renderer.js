@@ -41,8 +41,7 @@ module.exports = function render(errorsByHinter) {
           result.errors[hinttype] = {};
         }
         result.hinttype = errors[0].hinttype;
-        result.path = __filename;
-        result.nicePath = __filename.replace(process.env['TM_PROJECT_DIRECTORY'],'') + '1';
+        result.path = errors[0].file;
         result.errors[hinttype].numErrors = errors.length;
         result.errors[hinttype].errors = errors;
         result.numErrors += errors.length;
@@ -56,4 +55,5 @@ module.exports = function render(errorsByHinter) {
   }
 
   process.stdout.write(template(result));
+
 };

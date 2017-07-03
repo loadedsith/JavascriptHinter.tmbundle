@@ -30,7 +30,7 @@
       <div class="summary">
         <a class="problem" href="txmt://open?url=file://{{config.targetFile}}" title="Open target file">
           {{#if numErrors}}
-            {{numErrors}} problems {{nicePath}}
+            {{numErrors}} problems
           {{else}}
             Lint-free!
           {{/if}}
@@ -56,7 +56,7 @@
                       <strong>{{hinttype}}</strong> for
                     </span>
                     <a href="txmt://open?url=file://{{file}}&line={{line}}&column={{column}}">
-                      ./{{../../nicePath}}
+                      {{../../displayPath}}
                     </a>
                 </p>
               </li>
