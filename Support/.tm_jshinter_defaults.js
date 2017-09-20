@@ -2,7 +2,13 @@
  * JavascriptHinter plugin settings.
  */
 module.exports = {
-  disabledPlugins: ['gjslint', 'jscs', 'jshint', 'eslint', 'eslint_d'],
+  disabledPlugins: [
+    // 'eslint',
+    'eslint_d',
+    'gjslint',
+    'jscs',
+    'jshint'
+  ],
   ignored: [
     '.git/**',
     '.gitignore',

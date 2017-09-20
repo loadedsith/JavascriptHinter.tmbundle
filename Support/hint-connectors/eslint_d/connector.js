@@ -48,6 +48,7 @@ module.exports = {
     originalOutput
       .then(function(output) {
         let errors = [];
+
         let fileErrors = output.map(function(file) {
           return file.messages.map(function(message) {
             return {
@@ -68,9 +69,9 @@ module.exports = {
             errors.push(error);
           }
         }
+
         def.resolve(errors);
       }, def.reject);
-
     return def.promise;
   },
 };

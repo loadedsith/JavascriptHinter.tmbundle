@@ -49,20 +49,25 @@ module.exports = {
       .then(function(output) {
         let errors = [];
 
-        for ( let fileName in output ) {
-          let fileErrors = output[fileName].map((error) => {
-              return {
-                  column: error.column,
-                  // evidence: error.evidence || 'no evidence',
-                  file: files[0],
-                  hinttype: 'scss',
-                  line: error.line,
-                  message: error.reason +
-                      (error.linter ? ' (' + error.linter + ')' : ''),
-                      rule: error.code,
-                  };
+        let fileErrors = Object.keys(output).map(function(fileKey) {
+          const file = output[fileKey];
+
+          return file.map(function(message) {
+            return {
+              column: message.column,
+              file: fileKey,
+              hinttype: 'scss',
+              line: message.line,
+              message: message.reason +
+                (message.linter ? ' (' + message.linter + ')' : ''),
+            };
           });
-          errors = errors.concat(fileErrors)
+        });
+
+        for (let fileError of fileErrors) {
+          for (let error of fileError) {
+            errors.push(error);
+          }
         }
 
 

@@ -23,19 +23,25 @@ module.exports = function(runnable, args, options) {
   const proc = cp.spawn(runnable, args, options || {});
 
   proc.on('error', (e) => {
-    def.resolve([{
-        message: `Error executing linter. Is ${runnable} installed?<br>
-          <br>
-          Linter: ${runnable}<br>
-          <br>
-          args: ${args}<br>
-          <br>
-          options: ${JSON.stringify(options)}<br>
-          <br>
-          ${dataConcat}.<br>
-          <br>
-          Error: ${e}`.replace('\n', '<br>'),
-    }]);
+    def.resolve([
+      {
+        messages: [
+          {
+            message: `Error executing linter. Is ${runnable} installed?<br>
+            <br>
+            Linter: ${runnable}<br>
+            <br>
+            args: ${args}<br>
+            <br>
+            options: ${JSON.stringify(options)}<br>
+            <br>
+            ${dataConcat}.<br>
+            <br>
+            Error: ${e}`.replace('\n', '<br>'),
+          }
+        ]
+      }
+    ]);
   });
 
   proc.stdout.on('data', (data) => {
