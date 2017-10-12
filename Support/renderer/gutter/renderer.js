@@ -48,8 +48,6 @@ function refreshMarks(errors) {
     }
   }
 
-
-
   // arguments of gutter setting mate command
   // both --clear-mark and --set-mark commands are present here,
   // this allows clearing existing marks and setting the new ones in a single
