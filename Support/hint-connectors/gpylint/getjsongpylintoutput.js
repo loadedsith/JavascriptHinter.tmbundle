@@ -66,7 +66,6 @@ module.exports = function(runnable, args, options) {
       def.resolve(e);
     }
 
-    debugger;
     let err = {};
     lines.forEach((line, index, lines) => {
       let lineMatches = errorRegex.exec(line);
@@ -99,29 +98,7 @@ module.exports = function(runnable, args, options) {
         errors.push(err)
         err = {}
       }
-      // while ((lineMatches = errorRegex.exec(line))) {
-      //   // We want to keep building the error object until another lineMatch.
-      //   errorObject = {
-      //     column: null,
-      //     error: `E: ${lineMatches[2]}`,
-      //     evidence: '',
-      //     file: file,
-      //     hinttype: 'gjslint',
-      //     line: parseInt(lineMatches[1]),
-      //     message: lineMatches[3],
-      //     ready: false,
-      //   };
-      //   errors.push(errorObject);
-      //   lastError = errorObject;
-      //   match = true;
-      // }
-      // if (!match) {
-      //   lastError.message = lastError.message + ' ' + line;
-      // }
-      // match = false;
     });
-    console.log('errors', errors);
-    debugger;
     def.resolve(errors);
   });
 
