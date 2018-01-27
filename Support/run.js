@@ -84,7 +84,7 @@ const getOptions = function() {
  *     commands.
  */
 const pluginsToRunner = function* (
-    pluginCh, runnerCh, files, options, cmdOpts) {
+  pluginCh, runnerCh, files, options, cmdOpts) {
   if (files.length === 0) {
     files = fileList(cmdOpts.options.directory, options.ignored);
     if (!files) {
@@ -154,7 +154,7 @@ const render = function* (resultsCh) {
         break;
     }
   } catch (e) {
-    throw Error('Render failed to load' + e)
+    throw Error('Render failed to load' + e);
   }
 
   let results = {};
@@ -170,7 +170,6 @@ const render = function* (resultsCh) {
           results[jsonData[0].hinttype].push(...jsonData);
         }
       } else {
-
         if (!results['hinttype unknown']) {
           results['hinttype unknown'] = jsonData;
         } else {
@@ -200,8 +199,8 @@ const getCmdOpts = function() {
     ['h', 'help', 'display this help'],
     ['v', 'version', 'show version'],
   ])
-  .bindHelp()
-  .parseSystem();
+    .bindHelp()
+    .parseSystem();
 };
 
 

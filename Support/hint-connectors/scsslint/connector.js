@@ -26,7 +26,7 @@ module.exports = {
   process: function(files, options) {
     let def = Q.defer();
     let cwd = path.dirname(files[0]);
-    let args = ['--format', 'JSON'];
+    let args = ['-S', 'scss-lint', '--format', 'JSON'];
 
     if (process.env.TM_PROJECT_DIRECTORY) {
       cwd = process.env.TM_PROJECT_DIRECTORY;
@@ -39,7 +39,7 @@ module.exports = {
     }
 
     args = args.concat(files);
-    let originalOutput = getJsonOutput('scss-lint', args, {cwd: cwd});
+    let originalOutput = getJsonOutput(process.env.TM_RUBY, args, {cwd: cwd});
 
     /**
      * Original JSON output needs to be transformed so it can be used with the
@@ -48,18 +48,21 @@ module.exports = {
     originalOutput
       .then(function(output) {
         let errors = [];
-
         let fileErrors = Object.keys(output).map(function(fileKey) {
-          const file = output[fileKey];
+          let file = output[fileKey];
 
           return file.map(function(message) {
+            if (message.message) {
+              message.reason = message.message;
+            }
+
             return {
               column: message.column,
               file: fileKey,
               hinttype: 'scss',
               line: message.line,
               message: message.reason +
-                (message.linter ? ' (' + message.linter + ')' : ''),
+              (message.linter ? ' (' + message.linter + ')' : ''),
             };
           });
         });

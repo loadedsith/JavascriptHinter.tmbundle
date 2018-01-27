@@ -15,7 +15,7 @@ module.exports = {
     '.jshintrc',
     '.jshintignore',
     '.*.min.js',
-    '.*.min.css'
+    '.*.min.css',
   ],
   // eslint: {
     // args: [
@@ -24,7 +24,7 @@ module.exports = {
   // },
   gjslint: {
     args: [
-      '--disable', '0005,0001'
-    ]
-  }
+      '--disable', '0005,0001',
+    ],
+  },
 };

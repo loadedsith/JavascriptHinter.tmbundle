@@ -53,9 +53,11 @@ function refreshMarks(errors) {
   // this allows clearing existing marks and setting the new ones in a single
   // refresh cycle. see:
   // https://github.com/textmate/textmate/commit/65e72d
+  let csvLines = errorLines.filter((value, index, self) => self.indexOf(value) === index).join(',');
+
   args = [
     '--clear-mark', gutterImage,
-    '--line', errorLines.filter((value, index, self) => self.indexOf(value) === index).join(','),
+    '--line', csvLines,
     '--set-mark', gutterImage,
     currentFile,
   ];

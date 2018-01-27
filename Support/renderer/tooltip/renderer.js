@@ -112,7 +112,7 @@
     }
 
     cp.exec(`"$DIALOG" tooltip --transparent --html \
-        '${template(result)}\' &> /Users/heathg/Desktop/log.out &disown`);
+        '${template(result)}\' &> $\{TM_LINTER_LOG_PATH\}/TMLinterRender.log &disown`);
   }
 
   module.exports = function(errors) {
