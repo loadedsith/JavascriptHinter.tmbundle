@@ -47,26 +47,16 @@ module.exports = function(runnable, args, options) {
     let file;
     let lastError = {message: ''};
 
-    try {
-      if (!file) {
-        file = fileRegex.exec(lines[0].trim())[1];
+    if (!file) {
+      fileMatches = fileRegex.exec(lines[0].trim());
+      if (fileMatches[1]) {
+        file = fileMatches[1]
         lines.shift();
       }
-    } catch (e) {
-      let jsonData = [{
-        messages: [{
-          message: `Error running ${runnable}:<br>
-             <br>
-             ${file}.<br>
-             <br>
-             ${e}`.replace('\n', '<br>'),
-        }],
-      }];
-
-      def.resolve(e);
     }
 
     let err = {};
+
     lines.forEach((line, index, lines) => {
       let lineMatches = errorRegex.exec(line);
       if (lineMatches) {
