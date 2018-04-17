@@ -1,6 +1,6 @@
 {
   "name": "textmate-linter",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "description": "Textmate linter runner",
   "repository": {
     "type": "git",
@@ -10,6 +10,7 @@
   "dependencies": {
     "glob": "7.1.*",
     "handlebars": "*",
+    "js-csp": "1.0.x",
     "node-getopt": "0.2.*",
     "q": "1.0.x"
   }
