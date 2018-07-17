@@ -6,7 +6,7 @@
     "type": "git",
     "url": "http://github.com/loadedsith/JavascriptHinter.git"
   },
-  "engine":"6.6.*",
+  "engine": "6.6.*",
   "dependencies": {
     "glob": "7.1.*",
     "handlebars": "*",

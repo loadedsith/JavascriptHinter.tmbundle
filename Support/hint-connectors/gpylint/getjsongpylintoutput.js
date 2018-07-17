@@ -48,8 +48,8 @@ module.exports = function(runnable, args, options) {
     let lastError = {message: ''};
 
     if (!file) {
-      fileMatches = fileRegex.exec(lines[0].trim());
-      if (fileMatches[1]) {
+      let fileMatches = fileRegex.exec(lines[0].trim());
+      if (fileMatches && fileMatches[1]) {
         file = fileMatches[1]
         lines.shift();
       }
@@ -89,6 +89,7 @@ module.exports = function(runnable, args, options) {
         err = {}
       }
     });
+
     def.resolve(errors);
   });
 

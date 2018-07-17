@@ -35,20 +35,22 @@
 {{#if numErrors}}<p class='type'>Total problems: {{numErrors}}</p>
 {{else}}Lint-free!{{/if}}
 `;
-  const cp = require('child_process')
+  const cp = require('child_process');
   const Handlebars = require('handlebars');
 
   Handlebars.registerHelper('truncate', function(input, len) {
-    // TODO Fix this...
-    // if (input && input.length > len && input.length > 0) {
-    //   let output = input + ' ';
-    //
-    //   output = input.substr(0, len);
-    //   output = input.substr(0, output.lastIndexOf(' '));
-    //   output = (output.length > 0) ? output : input.substr(0, len);
-    //
-    //   return new Handlebars.SafeString(output + '...');
-    // }
+    if (input) {
+      input = input.trim();
+    }
+    if (input && input.length > len && input.length > 0) {
+      let output = input + ' ';
+
+      output = input.substr(0, len);
+      output = input.substr(0, output.lastIndexOf(' '));
+      output = (output.length > 0) ? output : input.substr(0, len);
+
+      return new Handlebars.SafeString(Handlebars.Utils.escapeExpression(output + '…'));
+    }
 
     return input;
   });
@@ -106,7 +108,7 @@
     }
 
     try {
-      console.log(template(result))
+      console.log(template(result));
     } catch (e) {
       console.log('failed: e', e);
     }

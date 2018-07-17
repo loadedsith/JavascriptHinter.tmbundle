@@ -20,6 +20,15 @@ module.exports = function(runnable, args, options) {
   let def = Q.defer();
   let dataConcat = '';
 
+  if (!options.env) {
+    options.env = {
+      PATH: `${process.env.PATH}:${process.env.TM_NODE_BIN}`,
+    };
+  } else if (!options.env.PATH) {
+    options.env.PATH = `${process.env.PATH}:${process.env.TM_NODE_BIN}`;
+  } else {
+    options.env.PATH = `${options.env.PATH}:${process.env.TM_NODE_BIN}`;
+  }
   const proc = cp.spawn(runnable, args, options || {});
 
   proc.on('error', (e) => {
@@ -38,9 +47,9 @@ module.exports = function(runnable, args, options) {
             ${dataConcat}.<br>
             <br>
             Error: ${e}`.replace('\n', '<br>'),
-          }
-        ]
-      }
+          },
+        ],
+      },
     ]);
   });
 
@@ -57,10 +66,15 @@ module.exports = function(runnable, args, options) {
       jsonData = [{
         messages: [{
           message: `Error running ${runnable}:<br>
-             <br>
-             ${dataConcat}.<br>
-             <br>
-             ${e}`.replace('\n', '<br>'),
+              dataConcat: ${dataConcat}.<br>
+              <br>
+              Linter: ${runnable}<br>
+              <br>
+              args: ${args}<br>
+              <br>
+              options: ${JSON.stringify(options)}<br>
+              <br>
+              ${e.stack}`.replace('\n', '<br>'),
         }],
       }];
     }
