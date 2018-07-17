@@ -1,10 +1,9 @@
 JavascriptHinter.tmbundle
 ===============
 
-This is a TextMate 2 JSHint and JSCS plugin using the installed version of JSHint and JSCS.
+This is the Javascript Hinter bundle for TextMate 2. It can provide lint for you as you work in TextMate2 via tooltip or via the HTML output window. It is based on bodnaristvan's JSHint.tmbundle.
 
-![Screenshot of JavascriptHinter.tmbundle running in TextMate with errors in the gutter -- note the visual glitches](https://cloud.githubusercontent.com/assets/710358/4801130/a284aa1c-5e2d-11e4-9a9a-2153961a88c8.png)
-
+It is, as of July 2018 actively used and maintained by Graham P Heath. 
 
 ### Installation ###
 
@@ -12,27 +11,39 @@ This is a TextMate 2 JSHint and JSCS plugin using the installed version of JSHin
 
 - [Node.js][nodejs]
 - [TextMate 2][textmate]
-- [JsHint][jshint]
-- [JavaScript Code Style checker][jscs]
 
 [nodejs]: http://www.nodejs.org
 [textmate]: https://github.com/textmate/textmate
-[jshint]: http://jshint.com/
-[jscs]: https://github.com/jscs-dev/node-jscs
 
 **Installation:**
 
-1.  Clone the repository `git clone git://github.com/bodnaristvan/JavascriptHinter.tmbundle.git`.
+1.  Clone the repository `git clone git://github.com/loadedsith/JavascriptHinter.tmbundle.git`.
 2.  Go to the directory `cd JavascriptHinter.tmbundle`.
-3.  Run `make`
+3.  Run `npm install`
 4.  Run `open .` in the same directory to install the bundle
-5.  If you run into problems with node not found while running the plugin, check out this comment: https://github.com/bodnaristvan/JSHint.tmbundle/issues/1#issuecomment-42533685
-6.  Make sure you have `jshint` and `jscs` installed and available for the user: `npm install -g jshint jscs`
+5.  If you run into problems with node not found while running the plugin, check out this comment: https://github.com/loadeddsith/JSHint.tmbundle/issues/
+
+**Linters:**
+
+Linters must be accessible from the command line as it is invoked by TextMate2. Environment variables can be used to ensure the stack is correct.
 
 ### Configuration ###
 
-The bundle will use the default installed jshint and jscs executables, and the existing configuration in the project or in home directory.
-The bundle is bound to the `^l` key by default in javascript mode, so make sure you disable previous bundles that were using this combo (like Jshint.tmbundle for example)
+Web output is bound to the `^l` key by default.
+Tooltip output is bound to saving the file for js, json, scss, and python.
+.tm_jshinter.js can be used to control the individual linters. You may use the bundled command "Open JavascriptHinter config" to create/modify your project's config.
+
+**Environment vars:**
+
+This project looks for a few configurations set by TextMate2's Preferences -> Variables config screen:
+
+`TM_NODE_BIN`
+  In your project do `which node`, then set this to that path (but remove /node, eg /Users/[USER]/.nvm/versions/node/v8.5.0/bin)
+  This value is automatically appended to $PATH for child scripts. See [ESLint's connector](~/Library/Application Support/TextMate/Pristine Copy/Bundles/JavascriptHinter.tmbundle/Support/hint-connectors/eslint/connector.js) for how this is used exactly.  
+`TM_LINTER_LOG_PATH`
+  Set to a system path where debug logs should be rendered. Requires TM_LINTER_DEBUG to be truthy (eg TM_LINTER_DEBUG=1)
+`TM_LINTER_DEBUG`
+  Set to 1 to enable logging. Requires TM_LINTER_LOG_PATH to be set.
 
 
 ### Presentation ###
