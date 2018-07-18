@@ -33,7 +33,7 @@
   {{/if}}
 {{/each}}
 {{#if numErrors}}<p class='type'>Total problems: {{numErrors}}</p>
-{{else}}Lint-free!{{/if}}
+{{else}}🎉Lint-free!{{/if}}
 `;
   const cp = require('child_process');
   const Handlebars = require('handlebars');
