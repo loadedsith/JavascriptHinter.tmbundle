@@ -1,5 +1,5 @@
 /* jshint node: true */
-(function() {
+{
   'use strict';
   const STYLES =
 `<style>
@@ -99,6 +99,12 @@
     }
 
     if (result.numErrors == 0) {
+      cp.exec(`"$DIALOG" tooltip --transparent --html \'${template()}\' &disown`);
+      if (process.env.TM_LINTER_DEBUG && process.env.TM_LINTER_LOG_PATH) {
+        let path = process.env.TM_LINTER_LOG_PATH;
+        cp.exec(`date >> ${path}/TMLinterRender.log`);
+        cp.exec(`echo \'${template()}\' >> ${path}/TMLinterRender.log 2>&1`);
+      }
       return;
     }
 
@@ -106,18 +112,22 @@
       result.project = process.env.TM_PROJECT_DIRECTORY;
       result.path = result.path.replace(process.env.TM_PROJECT_DIRECTORY, '');
     }
-
-    try {
-      console.log(template(result));
-    } catch (e) {
-      console.log('failed: e', e);
+    
+    if (process.env.TM_LINTER_DEBUG && process.env.TM_LINTER_LOG_PATH) {
+      let path = process.env.TM_LINTER_LOG_PATH;
+      try {
+        cp.exec(`date >> ${path}/TMLinterRender.log`);
+        cp.exec(`echo \'${template(result)}\' >> ${path}/TMLinterRender.log 2>&1`);
+      } catch (e) {
+        console.log('failed: e', e);
+        cp.exec(`echo \'Failed: ${e}\' >> ${path}/TMLinterRender.log 2>&1`);
+      }
     }
 
-    cp.exec(`"$DIALOG" tooltip --transparent --html \
-        '${template(result)}\' &> $\{TM_LINTER_LOG_PATH\}/TMLinterRender.log &disown`);
+    cp.exec(`"$DIALOG" tooltip --transparent --html \'${template(result)}\' &disown`);
   }
 
   module.exports = function(errors) {
     render(errors);
   };
-}());
+}
