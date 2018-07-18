@@ -57,6 +57,10 @@ module.exports = function(runnable, args, options) {
     dataConcat = dataConcat + data;
   });
 
+  proc.stderr.on('data', (data) => {
+    dataConcat = dataConcat + data;
+  });
+
   proc.on('close', () => {
     let jsonData = {};
 
@@ -65,10 +69,9 @@ module.exports = function(runnable, args, options) {
     } catch (e) {
       jsonData = [{
         messages: [{
-          message: `Error running ${runnable}:<br>
-              dataConcat: ${dataConcat}.<br>
-              <br>
-              Linter: ${runnable}<br>
+          message: `Error rendering json output for ${runnable}. <br>
+              Data: <br>
+              ${dataConcat}.<br>
               <br>
               args: ${args}<br>
               <br>
