@@ -39,6 +39,7 @@ module.exports = {
     }
 
     args = args.concat(files);
+
     let originalOutput = getJsonOutput('eslint', args, {cwd: cwd});
 
     /**
@@ -48,6 +49,9 @@ module.exports = {
     originalOutput
       .then(function(output) {
         let errors = [];
+
+        errors.config = args;
+
         let fileErrors = output.map(function(file) {
           return file.messages.map(function(message) {
             return {

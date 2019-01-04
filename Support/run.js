@@ -10,7 +10,7 @@ const JSHinterError = require('./JSHinterError');
 const DIRECTORY_OPTIONS_PATH =
     `${process.env.TM_DIRECTORY}/.tm_jshinter.js`;
 const PLUGIN_OPTIONS_PATH =
-    `${__dirname}/../.tm_jshinter.js`;
+    `${__dirname}/.tm_jshinter.js`;
 const PROJECT_OPTIONS_PATH =
     `${process.env.TM_PROJECT_DIRECTORY}/.tm_jshinter.js`;
 
@@ -37,30 +37,33 @@ const getOptions = function() {
 
   try {
     options = require(optionsPath);
+    // remove when this component is healthy again... 1/2019
+    cmdOpts.options.debug = true;
     if (cmdOpts.options.debug) {
-      console.log('using config in optionsPath');
+      console.log('using config in optionsPath', optionsPath);
     }
   } catch (e) {
     try {
       options = require(PROJECT_OPTIONS_PATH);
       if (cmdOpts.options.debug) {
-        console.log('using config in PROJECT_OPTIONS_PATH');
+        console.log('using config in PROJECT_OPTIONS_PATH', PROJECT_OPTIONS_PATH);
       }
     } catch (e) {
       try {
         options = require(DIRECTORY_OPTIONS_PATH);
         if (cmdOpts.options.debug) {
-          console.log('using config in DIRECTORY_OPTIONS_PATH');
+          console.log('using config in DIRECTORY_OPTIONS_PATH', DIRECTORY_OPTIONS_PATH);
         }
       } catch (e) {
         try {
           options = require(PLUGIN_OPTIONS_PATH);
           if (cmdOpts.options.debug) {
-            console.log('using config in PLUGIN_OPTIONS_PATH');
+            console.log('using config in PLUGIN_OPTIONS_PATH', PLUGIN_OPTIONS_PATH);
           }
         } catch (e) {
-          console.log('throw new JSHinterError(\'Could not load config file.\')');
-          throw new JSHinterError('Could not load config file.');
+          console.log('throw new JSHinterError(\'Could not load config file.\')', {e});
+          throw new JSHinterError('Could not load config file.' + ' D: ' +
+              DIRECTORY_OPTIONS_PATH +' P: '+ PLUGIN_OPTIONS_PATH);
         }
       }
     }
@@ -69,6 +72,8 @@ const getOptions = function() {
   if (!options) {
     throw new JSHinterError('Configuration file not found, aborting.');
   }
+
+  options['foo']=__dirname;
 
   return options;
 };
@@ -225,17 +230,16 @@ try {
   go(pluginsToRunner, [pluginCh, runnerCh, files, options, cmdOpts]);
   go(runnerToResults, [runnerCh, resultsCh]);
   go(render, [resultsCh]);
-
 } catch (e) {
   const tooltip = require('./renderer/tooltip/renderer');
-  let str = e.stack;
 
   tooltip({
     'JavascriptHinterError':
-       [
-         {
-           message:`Error executing<br>Error: ${e}<br><br>${e.stack.replace('\n','<br><br>')}`
-         }
+      [
+        {
+          message: `Error executing<br>Error:
+              ${e}<br><br>${e.stack.replace('\n', '<br><br>')}`,
+        },
       ],
   });
 }

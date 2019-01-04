@@ -25,6 +25,9 @@
   {{#if numErrors}}
     <p class='type'>[<b>{{hinttype}}</b>] found {{numErrors}} problems:</p>
     {{#each errors}}
+      {{#if @first}}
+        {{#if args}}args: {{args}}{{else}}no args{{/if}}
+      {{/if}}
       <p class='error'>Line {{line}}: {{{message}}}</p>
       {{#if evidence}}
         <code class='evidence'>{{truncate evidence 80}}</code>
@@ -32,7 +35,8 @@
     {{/each}}
   {{/if}}
 {{/each}}
-{{#if numErrors}}<p class='type'>Total problems: {{numErrors}}</p>
+{{#if numErrors}}
+  <p class='type'>Total problems: {{numErrors}}</p>
 {{else}}🎉Lint-free!{{/if}}
 `;
   const cp = require('child_process');
@@ -112,7 +116,7 @@
       result.project = process.env.TM_PROJECT_DIRECTORY;
       result.path = result.path.replace(process.env.TM_PROJECT_DIRECTORY, '');
     }
-    
+
     if (process.env.TM_LINTER_DEBUG && process.env.TM_LINTER_LOG_PATH) {
       let path = process.env.TM_LINTER_LOG_PATH;
       try {

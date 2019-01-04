@@ -1,6 +1,25 @@
 /**
  * JavascriptHinter plugin settings.
  */
+const fs = require('fs');
+
+let eslint = {
+  plausibleConfigPaths: [
+    `${process.env.TM_PROJECT_DIRECTORY}`,
+    `${process.env.HOME}`,
+    `${process.env.TM_BUNDLE_SUPPORT}`
+  ],
+  args:[]
+};
+eslint.plausibleConfigPaths.find((path) => {
+  path = `${path}/.eslintrc`;
+
+  if (fs.existsSync(path)) {
+    eslint.args.push('--config', path);
+    return true;
+  }
+});
+
 module.exports = {
   disabledPlugins: [
     // 'eslint',
@@ -24,7 +43,7 @@ module.exports = {
   ],
   eslint: {
     args: [
-      '--config', (process.env.TM_PROJECT_DIRECTORY || process.env.HOME) + '/../.eslintrc'
+      ...eslint.args
     ]
   },
   gjslint: {

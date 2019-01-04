@@ -49,9 +49,7 @@ module.exports = {
       .then(function(output) {
         let errors = [];
         let fileErrors = Object.keys(output).map(function(fileKey) {
-          let file = output[fileKey];
-
-          return file.map(function(message) {
+          return output[fileKey].map(function(message) {
             if (message.message) {
               message.reason = message.message;
             }
