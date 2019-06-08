@@ -1,6 +1,7 @@
 /* jshint node: true */
 {
   'use strict';
+
   const STYLES =
 `<style>
   body {
@@ -59,6 +60,15 @@
     return input;
   });
 
+  const execGeneric = (error, stdout, stderr) => {
+    if (error) {
+      console.error(`renderer.js exec error: ${error}`);
+      return;
+    }
+    console.log(`renderer.js stdout: ${stdout}`);
+    console.log(`renderer.js stderr: ${stderr}`);
+  };
+
   /**
    * Renders errors for tooltip.
    * @param {Array<Object>} errors Lint errors.
@@ -102,12 +112,13 @@
       }
     }
 
+    process.env.RESULT = template();
     if (result.numErrors == 0) {
-      cp.exec(`"$DIALOG" tooltip --transparent --html \'${template()}\' &disown`);
+      cp.exec('"$DIALOG" tooltip --transparent --html "$RESULT" &disown', execGeneric);
       if (process.env.TM_LINTER_DEBUG && process.env.TM_LINTER_LOG_PATH) {
         let path = process.env.TM_LINTER_LOG_PATH;
         cp.exec(`date >> ${path}/TMLinterRender.log`);
-        cp.exec(`echo \'${template()}\' >> ${path}/TMLinterRender.log 2>&1`);
+        cp.exec(`echo "$RESULT" >> ${path}/TMLinterRender.log 2>&1`);
       }
       return;
     }
@@ -117,18 +128,21 @@
       result.path = result.path.replace(process.env.TM_PROJECT_DIRECTORY, '');
     }
 
+    process.env.RESULT = template(result);
+
     if (process.env.TM_LINTER_DEBUG && process.env.TM_LINTER_LOG_PATH) {
       let path = process.env.TM_LINTER_LOG_PATH;
       try {
         cp.exec(`date >> ${path}/TMLinterRender.log`);
-        cp.exec(`echo \'${template(result)}\' >> ${path}/TMLinterRender.log 2>&1`);
+        cp.exec(`echo "$RESULT" >> ${path}/TMLinterRender.log 2>&1`);
       } catch (e) {
         console.log('failed: e', e);
         cp.exec(`echo \'Failed: ${e}\' >> ${path}/TMLinterRender.log 2>&1`);
       }
     }
 
-    cp.exec(`"$DIALOG" tooltip --transparent --html \'${template(result)}\' &disown`);
+    let out = '"$DIALOG" tooltip --transparent --html "$RESULT" &disown';
+    cp.exec(out, execGeneric);
   }
 
   module.exports = function(errors) {
